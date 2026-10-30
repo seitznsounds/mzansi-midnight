@@ -11,6 +11,8 @@ import {
   syncUserProfileWithAuth,
   saveUserProfile,
   subscribeToUserProfile,
+  updateOperativeCallsign,
+  getSavedUserProfile,
   backupProgressToCloud,
   restoreProgressFromCloud,
 } from '../engine/cloudSync';
@@ -51,27 +53,30 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     message: string;
   }>({ type: null, message: '' });
 
-  // Subscribe to real-time profile updates
+  // Subscribe to real-time profile updates (without blowing away active input draft)
   useEffect(() => {
     const unsubscribe = subscribeToUserProfile((p) => {
       setProfile(p);
-      setCallsignInput(p.displayName);
     });
     return () => unsubscribe();
   }, []);
 
-  // Load profile and achievements on open
+  // Initialize profile and draft callsign input strictly when modal opens
   useEffect(() => {
     if (!isOpen) return;
 
-    syncUserProfileWithAuth().then((p) => {
-      setProfile(p);
-      setCallsignInput(p.displayName);
-      if (onProfileUpdated) onProfileUpdated(p);
-    });
-
+    const currentProfile = getSavedUserProfile();
+    setProfile(currentProfile);
+    setCallsignInput(currentProfile.displayName);
     setAchievements(loadAchievements());
-  }, [isOpen, onProfileUpdated]);
+    setSyncStatus({ type: null, message: '' });
+
+    // Background auth sync without clobbering callsignInput draft
+    syncUserProfileWithAuth().then((synced) => {
+      setProfile(synced);
+      if (onProfileUpdated) onProfileUpdated(synced);
+    });
+  }, [isOpen]);
 
   // Handle ESC
   useEffect(() => {
@@ -111,19 +116,30 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     });
   };
 
-  const handleSaveCallsign = () => {
-    if (!callsignInput.trim()) return;
-    const updated: UserProfile = {
-      ...profile,
-      displayName: callsignInput.trim(),
-    };
-    saveUserProfile(updated);
-    setProfile(updated);
-    if (onProfileUpdated) onProfileUpdated(updated);
+  const handleSaveCallsign = async () => {
+    const trimmed = callsignInput.trim();
+    if (!trimmed) return;
+
     setSyncStatus({
-      type: 'success',
-      message: t('profile.msg_callsign_updated', 'Callsign updated successfully.', lang),
+      type: 'loading',
+      message: t('profile.msg_saving_handle', 'Updating operative handle...', lang),
     });
+
+    try {
+      const updated = await updateOperativeCallsign(trimmed);
+      setProfile(updated);
+      setCallsignInput(updated.displayName);
+      if (onProfileUpdated) onProfileUpdated(updated);
+      setSyncStatus({
+        type: 'success',
+        message: t('profile.msg_callsign_updated', 'Callsign updated successfully.', lang),
+      });
+    } catch (err: any) {
+      setSyncStatus({
+        type: 'error',
+        message: err?.message || 'Failed to update handle.',
+      });
+    }
   };
 
   const handleBackupToCloud = async () => {
@@ -338,21 +354,39 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           {/* Callsign Editor */}
           <div className="p-3.5 rounded-lg bg-black/40 border border-white/10 flex flex-wrap items-center justify-between gap-3">
             <div className="flex-1 min-w-[200px]">
-              <label className="text-[11px] text-white/50 uppercase tracking-widest block mb-1">
-                {t('profile.callsign_label', 'Operative Callsign', lang)}
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] text-white/50 uppercase tracking-widest block">
+                  {t('profile.callsign_label', 'Operative Callsign', lang)}
+                </label>
+                {profile.customCallsign && (
+                  <span className="text-[10px] text-cyan-400 font-mono tracking-wider font-semibold">
+                    ★ {t('profile.custom_badge', 'Custom Handle', lang)}
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
                 value={callsignInput}
                 onChange={(e) => setCallsignInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSaveCallsign();
+                  }
+                }}
                 maxLength={30}
                 placeholder={t('profile.callsign_placeholder', 'Enter operative handle...', lang)}
-                className="w-full px-3 py-1.5 bg-black/70 border border-white/20 rounded text-xs text-white placeholder-white/30 focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-1.5 bg-black/70 border border-white/20 rounded text-xs text-white placeholder-white/30 focus:outline-none focus:border-cyan-400 transition-colors"
               />
             </div>
             <button
               onClick={handleSaveCallsign}
-              className="px-4 py-1.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold uppercase self-end transition-colors"
+              disabled={!callsignInput.trim() || callsignInput.trim() === profile.displayName}
+              className={`px-4 py-1.5 rounded text-xs font-bold uppercase self-end transition-colors cursor-pointer ${
+                !callsignInput.trim() || callsignInput.trim() === profile.displayName
+                  ? 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
+                  : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20'
+              }`}
             >
               {t('profile.update_handle_btn', 'Update Handle', lang)}
             </button>

@@ -296,6 +296,46 @@ export function saveUserProfile(profile: UserProfile): void {
   }
 }
 
+/**
+ * Updates the operative callsign (display handle).
+ * Persists locally, broadcasts to all UI listeners, and synchronizes to
+ * remote Supabase Auth user metadata if logged in.
+ */
+export async function updateOperativeCallsign(newCallsign: string): Promise<UserProfile> {
+  const trimmed = newCallsign.trim();
+  if (!trimmed) {
+    throw new Error('Callsign cannot be empty.');
+  }
+
+  const currentProfile = getSavedUserProfile();
+  const updated: UserProfile = {
+    ...currentProfile,
+    displayName: trimmed,
+    customCallsign: trimmed,
+  };
+
+  // 1. Immediately persist locally and broadcast to all React components
+  saveUserProfile(updated);
+
+  // 2. If authenticated, persist to Supabase Auth metadata so it survives across sessions/devices
+  const user = await getSupabaseUser();
+  if (user) {
+    try {
+      await supabase.auth.updateUser({
+        data: {
+          custom_callsign: trimmed,
+          display_name: trimmed,
+        },
+      });
+      console.log('[Auth] Persisted custom callsign to remote user_metadata:', trimmed);
+    } catch (err) {
+      console.warn('[Auth] Remote callsign update skipped or offline:', err);
+    }
+  }
+
+  return updated;
+}
+
 export async function syncUserProfileWithAuth(explicitUser?: User | null): Promise<UserProfile> {
   const localProfile = getSavedUserProfile();
   const user = explicitUser !== undefined ? explicitUser : await getSupabaseUser();
@@ -311,14 +351,26 @@ export async function syncUserProfileWithAuth(explicitUser?: User | null): Promi
       user.user_metadata?.picture ||
       `https://api.dicebear.com/7.x/bottts/svg?seed=${user.id}`;
 
+    // Respect explicitly configured custom callsign from local profile or Supabase user_metadata
+    const hasCustomCallsign =
+      Boolean(localProfile.customCallsign) ||
+      Boolean(user.user_metadata?.custom_callsign) ||
+      (!localProfile.isGuest &&
+        localProfile.displayName &&
+        localProfile.displayName !== 'Fixer-Operative' &&
+        localProfile.displayName !== googleName);
+
+    const activeCallsign =
+      localProfile.customCallsign ||
+      user.user_metadata?.custom_callsign ||
+      (hasCustomCallsign ? localProfile.displayName : googleName);
+
     const updated: UserProfile = {
       ...localProfile,
       id: user.id,
       email: user.email || '',
-      displayName:
-        localProfile.isGuest || localProfile.displayName === 'Fixer-Operative'
-          ? googleName
-          : localProfile.displayName,
+      displayName: activeCallsign,
+      customCallsign: hasCustomCallsign ? activeCallsign : undefined,
       avatarUrl: avatar,
       isGuest: false,
     };

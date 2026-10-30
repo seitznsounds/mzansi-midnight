@@ -35,6 +35,7 @@ export interface UserProfile {
   fastestRunSeconds: number;
   unlockedEndingsCount: number;
   lastSyncedAt?: string;
+  customCallsign?: string;
 }
 
 export interface Achievement {

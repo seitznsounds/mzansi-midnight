@@ -3,6 +3,7 @@ import {
   getSavedUserProfile,
   saveUserProfile,
   syncUserProfileWithAuth,
+  updateOperativeCallsign,
   subscribeToUserProfile,
   USER_PROFILE_KEY,
 } from '../cloudSync';
@@ -125,6 +126,46 @@ describe('Cloud Auth & Session Recognition Engine', () => {
     const synced = await syncUserProfileWithAuth(mockUser);
     expect(synced.displayName).toBe('Bra K Shadow Fox');
     expect(synced.email).toBe('kagiso@gmail.com');
+  });
+
+  it('allows user to update operative callsign, persisting customCallsign and notifying listeners', async () => {
+    let received: UserProfile | null = null;
+    const unsubscribe = subscribeToUserProfile((p) => {
+      received = p;
+    });
+
+    const updated = await updateOperativeCallsign('Soweto Vanguard');
+    expect(updated.displayName).toBe('Soweto Vanguard');
+    expect(updated.customCallsign).toBe('Soweto Vanguard');
+    expect((received as UserProfile | null)?.displayName).toBe('Soweto Vanguard');
+
+    const loaded = getSavedUserProfile();
+    expect(loaded.displayName).toBe('Soweto Vanguard');
+    expect(loaded.customCallsign).toBe('Soweto Vanguard');
+
+    unsubscribe();
+  });
+
+  it('rejects empty or whitespace-only operative callsigns', async () => {
+    await expect(updateOperativeCallsign('   ')).rejects.toThrow('Callsign cannot be empty.');
+  });
+
+  it('respects custom_callsign stored in Supabase user_metadata', async () => {
+    const mockUser: User = {
+      id: 'google_uid_meta',
+      app_metadata: {},
+      user_metadata: {
+        full_name: 'Lungile Khanyile',
+        custom_callsign: 'Apex Gqom Operator',
+      },
+      aud: 'authenticated',
+      created_at: '2026-10-30T10:00:00Z',
+      email: 'lungile@mzansi.co.za',
+    };
+
+    const synced = await syncUserProfileWithAuth(mockUser);
+    expect(synced.displayName).toBe('Apex Gqom Operator');
+    expect(synced.customCallsign).toBe('Apex Gqom Operator');
   });
 
   it('unsubscribes listeners cleanly without memory leaks', () => {
