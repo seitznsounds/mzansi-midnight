@@ -337,6 +337,9 @@ export const TitleIntroScreen: React.FC<{
   onOpenSettings,
 }) => {
   const [activeTab, setActiveTab] = useState<IntroMenuTab>('main');
+  const [isMobileSynopsisExpanded, setIsMobileSynopsisExpanded] = useState<boolean>(false);
+  const tabContentRef = React.useRef<HTMLDivElement>(null);
+  const isFirstRender = React.useRef(true);
   const [selectedNewSlot, setSelectedNewSlot] = useState<SaveSlotId>('slot_1');
   const [confirmDeleteSlot, setConfirmDeleteSlot] = useState<SaveSlotId | null>(
     null
@@ -371,6 +374,20 @@ export const TitleIntroScreen: React.FC<{
     });
     return () => unsubscribe();
   }, []);
+
+  // Automatically scroll active section into mobile viewport when user changes choices
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      const timer = setTimeout(() => {
+        tabContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
 
   const handleSelectStory = (storyId: StoryId) => {
     setActiveStory(storyId);
@@ -439,7 +456,8 @@ export const TitleIntroScreen: React.FC<{
               title={t('scores.tooltip', 'Open High Scores, Speedruns & Completionist Board', lang)}
             >
               <span>🏆</span>
-              <span>{t('scores.btn', 'Scores & Speedruns', lang)}</span>
+              <span className="hidden sm:inline">{t('scores.btn', 'Scores & Speedruns', lang)}</span>
+              <span className="sm:hidden">{t('scores.btn_short', 'Scores', lang)}</span>
             </button>
 
             {/* Google Profile & Cloud Save */}
@@ -481,16 +499,16 @@ export const TitleIntroScreen: React.FC<{
               }}
               className="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 uppercase tracking-wider cursor-pointer transition-colors"
             >
-              ⚙ {t('ui.settings', 'Settings', lang)}
+              ⚙ <span className="hidden sm:inline">{t('ui.settings', 'Settings', lang)}</span>
             </button>
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6">
-          {/* HERO TITLE & KEY ART BANNER */}
-          <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
+          {/* HERO TITLE & KEY ART BANNER - DESKTOP VIEW */}
+          <div className="hidden md:flex flex-row gap-6 items-center">
             <div
-              className={`relative w-full md:w-64 h-40 sm:h-44 rounded-xl overflow-hidden border ${storyTheme.border} shrink-0 shadow-lg ${storyTheme.glow}`}
+              className={`relative w-64 h-44 rounded-xl overflow-hidden border ${storyTheme.border} shrink-0 shadow-lg ${storyTheme.glow}`}
             >
               <img
                 key={activeStory.id}
@@ -510,7 +528,7 @@ export const TitleIntroScreen: React.FC<{
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <div
-                  className={`inline-block px-2.5 py-0.5 rounded ${storyTheme.badge} border text-[10px] sm:text-[11px] font-mono uppercase tracking-wider font-semibold`}
+                  className={`inline-block px-2.5 py-0.5 rounded ${storyTheme.badge} border text-[11px] font-mono uppercase tracking-wider font-semibold`}
                 >
                   STORY 0{activeStory.number} // {activeStory.subtitle}
                 </div>
@@ -519,68 +537,206 @@ export const TitleIntroScreen: React.FC<{
                 </div>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white tracking-tight flex flex-wrap items-baseline gap-2">
+              <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight flex flex-wrap items-baseline gap-2">
                 <span>{t('ui.app_title', 'Mzansi Midnight', lang)}:</span>
                 <span className={storyTheme.text}>{activeStory.title}</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              <p className="text-sm text-zinc-300 leading-relaxed">
                 {activePitch}
               </p>
             </div>
           </div>
 
+          {/* HERO TITLE & KEY ART BANNER - MOBILE ADAPTIVE VIEW */}
+          <div className="md:hidden">
+            {activeTab === 'main' ? (
+              // Mobile Overview Hero: Compact, touch-friendly, keeps menu visible above the fold
+              <div className="space-y-3">
+                <div
+                  className={`relative w-full h-28 sm:h-36 rounded-xl overflow-hidden border ${storyTheme.border} shadow-md ${storyTheme.glow}`}
+                >
+                  <img
+                    key={activeStory.id}
+                    src={activeStory.imageArt}
+                    alt={activeStory.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent" />
+                  <div
+                    className={`absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono ${storyTheme.text}`}
+                  >
+                    <span className="font-semibold">{blackoutInfo.stage}</span>
+                    <span>{blackoutInfo.time}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <div
+                      className={`inline-block px-2 py-0.5 rounded ${storyTheme.badge} border text-[10px] font-mono uppercase tracking-wider font-semibold`}
+                    >
+                      STORY 0{activeStory.number} // {activeStory.subtitle}
+                    </div>
+                  </div>
+
+                  <h1 className="text-xl sm:text-2xl font-semibold text-white tracking-tight flex flex-wrap items-baseline gap-1.5">
+                    <span>{t('ui.app_title', 'Mzansi Midnight', lang)}:</span>
+                    <span className={storyTheme.text}>{activeStory.title}</span>
+                  </h1>
+
+                  <p className={`text-xs text-zinc-300 leading-relaxed ${isMobileSynopsisExpanded ? '' : 'line-clamp-2'}`}>
+                    {activePitch}
+                  </p>
+                  <button
+                    onClick={() => setIsMobileSynopsisExpanded(!isMobileSynopsisExpanded)}
+                    className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                  >
+                    {isMobileSynopsisExpanded
+                      ? t('intro.less_synopsis', '▲ Collapse Briefing', lang)
+                      : t('intro.more_synopsis', '▼ Read Full Story Briefing', lang)}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Mobile Compact Dossier Header: Collapsed when in a sub-view (New Game, Load, 5 Stories)
+              // so the active view's controls immediately fill the screen!
+              <div className="space-y-2">
+                <div
+                  className={`p-2.5 rounded-xl border ${storyTheme.border} ${storyTheme.bg} flex items-center justify-between gap-3 shadow-md`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img
+                      src={activeStory.imageArt}
+                      alt={activeStory.title}
+                      className="w-10 h-10 rounded-lg object-cover shrink-0 border border-zinc-700"
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
+                        <span className={`font-semibold ${storyTheme.text}`}>
+                          0{activeStory.number}
+                        </span>
+                        <span>•</span>
+                        <span className="truncate">{blackoutInfo.stage}</span>
+                      </div>
+                      <div className="text-xs font-bold text-white truncate">
+                        {activeStory.title}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0 font-mono text-[10px]">
+                    <button
+                      onClick={() =>
+                        setIsMobileSynopsisExpanded(!isMobileSynopsisExpanded)
+                      }
+                      className="px-2 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white cursor-pointer"
+                      title={t('intro.toggle_dossier', 'Toggle Dossier', lang)}
+                    >
+                      {isMobileSynopsisExpanded
+                        ? t('intro.hide_info', '▲ Hide', lang)
+                        : t('intro.show_info', 'ℹ Info', lang)}
+                    </button>
+                    <button
+                      onClick={() => {
+                        soundscape.playDieSelect();
+                        setActiveTab('main');
+                      }}
+                      className="px-2 py-1 rounded bg-zinc-900 border border-zinc-700 text-amber-300 hover:text-amber-200 cursor-pointer"
+                      title={t('intro.back_to_menu', 'Back to Overview', lang)}
+                    >
+                      ✕ {t('intro.close', 'Close', lang)}
+                    </button>
+                  </div>
+                </div>
+
+                {isMobileSynopsisExpanded && (
+                  <div className="p-3 rounded-xl bg-zinc-950/90 border border-zinc-800 space-y-2 text-xs text-zinc-300 leading-relaxed animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-zinc-400">
+                      <span>{activeStory.region}</span>
+                      <span className={storyTheme.text}>{blackoutInfo.time}</span>
+                    </div>
+                    <p>{activePitch}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* MAIN MENU COMMAND BAR */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1 border-b border-zinc-800 pb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 pt-1 border-b border-zinc-800 pb-4 sm:pb-5">
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setActiveTab(activeTab === 'campaign' ? 'main' : 'campaign');
               }}
-              className={`px-3.5 py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
+              className={`p-2.5 sm:px-3.5 sm:py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
                 activeTab === 'campaign'
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-semibold shadow-[0_0_20px_rgba(251,191,36,0.25)]'
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-semibold shadow-[0_0_20px_rgba(251,191,36,0.25)] ring-1 ring-amber-300'
                   : 'bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border-zinc-700'
               }`}
             >
-              <span className="text-[10px] opacity-75">
-                {t('intro.menu_campaign', '00 // CAMPAIGN', lang)} ({unlockedStoryCount}/5)
-              </span>
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] opacity-75">
+                  {t('intro.menu_campaign', '00 // CAMPAIGN', lang)}
+                </span>
+                {activeTab === 'campaign' && (
+                  <span className="text-[9px] font-bold px-1 rounded bg-black/30 text-slate-950">
+                    ● ACTIVE
+                  </span>
+                )}
+              </div>
               <span className="mt-1 text-xs sm:text-sm font-semibold text-amber-300">
-                {t('intro.the_quintet', 'The 5 Stories', lang)}
+                {t('intro.the_quintet', 'The 5 Stories', lang)} ({unlockedStoryCount}/5)
               </span>
             </button>
 
             <button
               onClick={() => {
                 soundscape.playDieSelect();
-                setActiveTab('new');
+                setActiveTab(activeTab === 'new' ? 'main' : 'new');
               }}
-              className={`px-3.5 py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
+              className={`p-2.5 sm:px-3.5 sm:py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
                 activeTab === 'new'
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-semibold shadow-[0_0_20px_rgba(251,191,36,0.25)]'
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-semibold shadow-[0_0_20px_rgba(251,191,36,0.25)] ring-1 ring-amber-300'
                   : 'bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border-zinc-700'
               }`}
             >
-              <span className="text-[10px] opacity-75">{t('intro.menu_start', '01 // START', lang)}</span>
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] opacity-75">{t('intro.menu_start', '01 // START', lang)}</span>
+                {activeTab === 'new' && (
+                  <span className="text-[9px] font-bold px-1 rounded bg-black/30 text-slate-950">
+                    ● ACTIVE
+                  </span>
+                )}
+              </div>
               <span className="mt-1 text-xs sm:text-sm">{t('intro.new_game', 'New Game', lang)}</span>
             </button>
 
             <button
               onClick={() => {
                 soundscape.playDieSelect();
-                setActiveTab('load');
+                setActiveTab(activeTab === 'load' ? 'main' : 'load');
               }}
-              className={`px-3.5 py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
+              className={`p-2.5 sm:px-3.5 sm:py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
                 activeTab === 'load'
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-semibold shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-semibold shadow-[0_0_20px_rgba(168,85,247,0.25)] ring-1 ring-emerald-300'
                   : 'bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border-zinc-700'
               }`}
             >
-              <span className="text-[10px] opacity-75">
-                {t('intro.menu_dossiers', '02 // DOSSIERS', lang)} ({populatedSlots.length}/4)
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] opacity-75">
+                  {t('intro.menu_dossiers', '02 // DOSSIERS', lang)}
+                </span>
+                {activeTab === 'load' && (
+                  <span className="text-[9px] font-bold px-1 rounded bg-black/30 text-slate-950">
+                    ● ACTIVE
+                  </span>
+                )}
+              </div>
+              <span className="mt-1 text-xs sm:text-sm">
+                {t('intro.load_game', 'Load Game', lang)} ({populatedSlots.length}/4)
               </span>
-              <span className="mt-1 text-xs sm:text-sm">{t('intro.load_game', 'Load Game', lang)}</span>
             </button>
 
             <button
@@ -588,16 +744,25 @@ export const TitleIntroScreen: React.FC<{
                 soundscape.playDieSelect();
                 setActiveTab(activeTab === 'archive' ? 'main' : 'archive');
               }}
-              className={`px-3.5 py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
+              className={`p-2.5 sm:px-3.5 sm:py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
                 activeTab === 'archive'
-                  ? 'bg-purple-500 text-slate-950 border-purple-400 font-semibold shadow-[0_0_20px_rgba(168,85,247,0.25)]'
+                  ? 'bg-purple-500 text-slate-950 border-purple-400 font-semibold shadow-[0_0_20px_rgba(168,85,247,0.25)] ring-1 ring-purple-300'
                   : 'bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border-zinc-700'
               }`}
             >
-              <span className="text-[10px] opacity-75">
-                {t('intro.menu_archive', '03 // ARCHIVE', lang)} ({unlockedEndingCount}/8)
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] opacity-75">
+                  {t('intro.menu_archive', '03 // ARCHIVE', lang)}
+                </span>
+                {activeTab === 'archive' && (
+                  <span className="text-[9px] font-bold px-1 rounded bg-black/30 text-slate-950">
+                    ● ACTIVE
+                  </span>
+                )}
+              </div>
+              <span className="mt-1 text-xs sm:text-sm">
+                {t('intro.case_endings', 'Case Endings', lang)} ({unlockedEndingCount}/{ALL_ENDING_IDS.length})
               </span>
-              <span className="mt-1 text-xs sm:text-sm">{t('intro.case_endings', 'Case Endings', lang)}</span>
             </button>
 
             <button
@@ -605,7 +770,7 @@ export const TitleIntroScreen: React.FC<{
                 soundscape.playDieSelect();
                 onOpenSettings();
               }}
-              className="px-3.5 py-3 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border border-zinc-700 font-mono text-xs uppercase tracking-wider transition-all cursor-pointer text-left flex flex-col justify-between"
+              className="p-2.5 sm:px-3.5 sm:py-3 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border border-zinc-700 font-mono text-xs uppercase tracking-wider transition-all cursor-pointer text-left flex flex-col justify-between"
             >
               <span className="text-[10px] text-zinc-400">{t('intro.menu_system', '04 // SYSTEM', lang)}</span>
               <span className="mt-1 text-xs sm:text-sm">{t('intro.settings_lang', 'Settings / Lang', lang)}</span>
@@ -616,16 +781,52 @@ export const TitleIntroScreen: React.FC<{
                 soundscape.playDieSelect();
                 setActiveTab(activeTab === 'briefing' ? 'main' : 'briefing');
               }}
-              className={`col-span-2 sm:col-span-1 px-3.5 py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
+              className={`col-span-2 sm:col-span-1 p-2.5 sm:px-3.5 sm:py-3 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer text-left flex flex-col justify-between ${
                 activeTab === 'briefing'
-                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-semibold'
+                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-semibold ring-1 ring-cyan-300'
                   : 'bg-zinc-900/90 hover:bg-zinc-800 text-zinc-100 border-zinc-700'
               }`}
             >
-              <span className="text-[10px] opacity-75">{t('intro.menu_primer', '05 // HELP & MANUAL', lang)}</span>
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] opacity-75">{t('intro.menu_primer', '05 // HELP & MANUAL', lang)}</span>
+                {activeTab === 'briefing' && (
+                  <span className="text-[9px] font-bold px-1 rounded bg-black/30 text-slate-950">
+                    ● ACTIVE
+                  </span>
+                )}
+              </div>
               <span className="mt-1 text-xs sm:text-sm">{t('intro.field_briefing', 'Help & Manual', lang)}</span>
             </button>
           </div>
+
+          {/* Scroll Anchor & Mobile Active Section Indicator */}
+          <div ref={tabContentRef} className="scroll-mt-4" />
+
+          {activeTab !== 'main' && (
+            <div className="flex md:hidden items-center justify-between p-2.5 rounded-xl bg-zinc-900/95 border border-zinc-700/80 font-mono text-xs shadow-sm">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                <span className="text-zinc-400 uppercase text-[10px] shrink-0">VIEW:</span>
+                <span className="text-white font-bold uppercase tracking-wider truncate">
+                  {activeTab === 'campaign' && t('intro.the_quintet', 'The 5 Stories', lang)}
+                  {activeTab === 'new' && t('intro.new_game', 'New Game', lang)}
+                  {activeTab === 'load' && t('intro.load_game', 'Load Game', lang)}
+                  {activeTab === 'archive' && t('intro.case_endings', 'Case Endings', lang)}
+                  {activeTab === 'briefing' && t('intro.field_briefing', 'Help & Manual', lang)}
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setActiveTab('main');
+                }}
+                className="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white border border-zinc-600 text-[11px] font-semibold flex items-center gap-1 cursor-pointer shrink-0"
+              >
+                <span>←</span>
+                <span>{t('intro.back', 'Back to Menu', lang)}</span>
+              </button>
+            </div>
+          )}
 
 
           {/* VIEW 1: DEFAULT MAIN OVERVIEW */}
@@ -2188,6 +2389,22 @@ export const TitleIntroScreen: React.FC<{
         onProfileUpdated={(p) => setUserProfile(p)}
         lang={lang}
       />
+
+      {/* Floating Quick-Menu Button (Mobile Only when viewing sub-tab) */}
+      {activeTab !== 'main' && (
+        <div className="fixed bottom-4 right-4 z-40 md:hidden">
+          <button
+            onClick={() => {
+              soundscape.playDieSelect();
+              tabContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className="px-3.5 py-2 rounded-full bg-zinc-900/95 text-amber-300 border border-amber-500/50 shadow-2xl font-mono text-xs font-bold uppercase tracking-wider backdrop-blur-md flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+          >
+            <span>↑</span>
+            <span>{t('intro.menu_top', 'Menu Top', lang)}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
