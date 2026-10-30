@@ -101,7 +101,7 @@ Includes dynamic reverse mapping, retrospective narrative log translation, and r
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/MisterSeitz/mzansi-midnight.git
+git clone https://github.com/seitznsounds/mzansi-midnight.git
 cd mzansi-midnight
 
 # Install dependencies
@@ -161,4 +161,4 @@ npm start
 
 ## 📄 License
 
-Proprietary / All Rights Reserved. Created by **MisterSeitz**.
+Proprietary / All Rights Reserved. Created by **seitznsounds**.
