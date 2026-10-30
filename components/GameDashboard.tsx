@@ -47,7 +47,7 @@ import { CutsceneModal } from './CutsceneModal';
 import { STORY_CUTSCENES } from '../data/cutscenes';
 import { LeaderboardModal } from './LeaderboardModal';
 import { UserProfileModal } from './UserProfileModal';
-import { getSavedUserProfile } from '../engine/cloudSync';
+import { getSavedUserProfile, subscribeToUserProfile } from '../engine/cloudSync';
 import { UserProfile } from '../types/leaderboard';
 import { formatSpeedrunTime } from '../engine/scoringEngine';
 
@@ -813,6 +813,14 @@ export const GameDashboard: React.FC<{
   const [userProfile, setUserProfile] = useState<UserProfile>(() =>
     getSavedUserProfile()
   );
+
+  // Subscribe to real-time user profile & cloud auth changes
+  useEffect(() => {
+    const unsubscribe = subscribeToUserProfile((updated) => {
+      setUserProfile(updated);
+    });
+    return () => unsubscribe();
+  }, []);
   const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
 
   // Speedrun stopwatch tracker

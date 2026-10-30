@@ -19,6 +19,7 @@ import {
   writeSaveSlot,
 } from '../engine/storage';
 import { loadCampaignProgression } from '../engine/campaignStorage';
+import { setupAuthListener } from '../engine/cloudSync';
 import { soundscape } from '../engine/soundscape';
 import { initializeNativeApp } from '../engine/nativeBridge';
 import { TitleIntroScreen } from '../components/TitleIntroScreen';
@@ -47,6 +48,7 @@ export default function EthekwiniGoldGame() {
 
   // Hydrate settings & multi-slot save dossiers on mount and initialize native bridge
   useEffect(() => {
+    setupAuthListener();
     const loadedSettings = loadSettings();
     setSettings(loadedSettings);
     soundscape.applySettings(loadedSettings);

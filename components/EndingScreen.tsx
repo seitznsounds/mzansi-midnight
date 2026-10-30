@@ -20,6 +20,7 @@ import {
 import {
   submitHighScore,
   getSavedUserProfile,
+  subscribeToUserProfile,
 } from '../engine/cloudSync';
 import { evaluateAchievements } from '../engine/achievements';
 import { LeaderboardModal } from './LeaderboardModal';
@@ -91,6 +92,14 @@ export const EndingScreen: React.FC<{
   const [isScoreSubmitted, setIsScoreSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userProfile, setUserProfile] = useState(() => getSavedUserProfile());
+
+  // Subscribe to real-time user profile & cloud auth changes
+  useEffect(() => {
+    const unsubscribe = subscribeToUserProfile((updated) => {
+      setUserProfile(updated);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const isOctagon = state.storyId === 'story_5_octagon';
   const isCape = state.storyId === 'story_4_cape';

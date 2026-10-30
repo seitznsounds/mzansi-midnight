@@ -175,19 +175,51 @@ export const BENCHMARK_LEADERBOARD_ENTRIES: LeaderboardEntry[] = [
 ];
 
 /**
- * Authentication Helper Functions
+ * Authentication Helper Functions & Subscription System
  */
+type ProfileListener = (profile: UserProfile) => void;
+const profileListeners = new Set<ProfileListener>();
+
+/**
+ * Subscribe to real-time User Profile changes (auth state, callsign edits, cloud sync).
+ * Immediately invokes callback with current cached profile upon registration.
+ */
+export function subscribeToUserProfile(listener: ProfileListener): () => void {
+  profileListeners.add(listener);
+  try {
+    listener(getSavedUserProfile());
+  } catch {
+    // Ignore initial invocation error
+  }
+  return () => {
+    profileListeners.delete(listener);
+  };
+}
+
+/**
+ * Broadcast updated profile to all active listeners in React components.
+ */
+export function notifyUserProfileListeners(profile: UserProfile): void {
+  profileListeners.forEach((listener) => {
+    try {
+      listener(profile);
+    } catch (e) {
+      console.error('[Auth] Error notifying profile listener:', e);
+    }
+  });
+}
+
 export async function signInWithGoogle(): Promise<{ error: Error | null }> {
   try {
     if (typeof window === 'undefined') return { error: null };
-    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    const redirectTo = window.location.origin + window.location.pathname;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo,
         queryParams: {
           access_type: 'offline',
-          prompt: 'consent',
+          prompt: 'select_account',
         },
       },
     });
@@ -200,9 +232,11 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
 export async function signOutUser(): Promise<{ error: Error | null }> {
   try {
     const { error } = await supabase.auth.signOut();
-    // Also clear cached profile
+    // Also clear cached profile and notify all screens to revert to guest dossier
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(USER_PROFILE_KEY);
+      const guestProfile = getSavedUserProfile();
+      notifyUserProfileListeners(guestProfile);
     }
     return { error: error ? new Error(error.message) : null };
   } catch (err: any) {
@@ -212,6 +246,11 @@ export async function signOutUser(): Promise<{ error: Error | null }> {
 
 export async function getSupabaseUser(): Promise<User | null> {
   try {
+    // Fast path: inspect local active session first without network delay
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session?.user) {
+      return sessionData.session.user;
+    }
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -251,14 +290,15 @@ export function saveUserProfile(profile: UserProfile): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+    notifyUserProfileListeners(profile);
   } catch {
     // Ignore storage errors
   }
 }
 
-export async function syncUserProfileWithAuth(): Promise<UserProfile> {
+export async function syncUserProfileWithAuth(explicitUser?: User | null): Promise<UserProfile> {
   const localProfile = getSavedUserProfile();
-  const user = await getSupabaseUser();
+  const user = explicitUser !== undefined ? explicitUser : await getSupabaseUser();
 
   if (user) {
     const googleName =
@@ -275,7 +315,10 @@ export async function syncUserProfileWithAuth(): Promise<UserProfile> {
       ...localProfile,
       id: user.id,
       email: user.email || '',
-      displayName: localProfile.displayName === 'Fixer-Operative' ? googleName : localProfile.displayName,
+      displayName:
+        localProfile.isGuest || localProfile.displayName === 'Fixer-Operative'
+          ? googleName
+          : localProfile.displayName,
       avatarUrl: avatar,
       isGuest: false,
     };
@@ -284,6 +327,127 @@ export async function syncUserProfileWithAuth(): Promise<UserProfile> {
   }
 
   return localProfile;
+}
+
+/**
+ * Detects and handles OAuth redirect parameters (PKCE `code` or implicit tokens)
+ * in the window URL, exchanges the code for a verified session, cleans the browser URL bar,
+ * and synchronizes the local user profile.
+ */
+export async function handleAuthRedirect(): Promise<UserProfile | null> {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const currentUrl = new URL(window.location.href);
+    const code = currentUrl.searchParams.get('code');
+    const errorParam =
+      currentUrl.searchParams.get('error') ||
+      (window.location.hash.includes('error=') ? 'oauth_error' : null);
+    const hasHashTokens =
+      window.location.hash &&
+      (window.location.hash.includes('access_token=') ||
+        window.location.hash.includes('refresh_token='));
+
+    // Handle provider errors (e.g. user cancelled login)
+    if (errorParam) {
+      const errorDesc =
+        currentUrl.searchParams.get('error_description') ||
+        'Authentication was cancelled or failed.';
+      console.warn('[Auth] OAuth redirect error:', errorParam, errorDesc);
+
+      // Clean error params from address bar
+      currentUrl.searchParams.delete('error');
+      currentUrl.searchParams.delete('error_code');
+      currentUrl.searchParams.delete('error_description');
+      const cleanUrl =
+        currentUrl.pathname +
+        (currentUrl.search ? currentUrl.search : '') +
+        (window.location.hash.includes('error=') ? '' : currentUrl.hash);
+      window.history.replaceState({}, document.title, cleanUrl);
+      return null;
+    }
+
+    // 1. PKCE Code Exchange flow
+    if (code) {
+      console.log('[Auth] Detected OAuth code in URL. Exchanging for session...');
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+      // Clean the OAuth code and state from URL immediately to prevent reused code errors
+      currentUrl.searchParams.delete('code');
+      currentUrl.searchParams.delete('state');
+      const cleanUrl =
+        currentUrl.pathname + (currentUrl.search ? currentUrl.search : '') + currentUrl.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+
+      if (error) {
+        console.error('[Auth] Failed to exchange code for session:', error.message);
+      } else if (data?.session?.user) {
+        console.log('[Auth] Session established successfully for:', data.session.user.email);
+        const synced = await syncUserProfileWithAuth(data.session.user);
+        return synced;
+      }
+    }
+    // 2. Hash Fragment Token flow
+    else if (hasHashTokens) {
+      console.log('[Auth] Detected OAuth tokens in hash fragment. Parsing session...');
+      const { data } = await supabase.auth.getSession();
+
+      // Clean hash from URL
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname + window.location.search
+      );
+
+      if (data?.session?.user) {
+        const synced = await syncUserProfileWithAuth(data.session.user);
+        return synced;
+      }
+    }
+
+    // Check if session exists in storage
+    const { data: currentSession } = await supabase.auth.getSession();
+    if (currentSession?.session?.user) {
+      const synced = await syncUserProfileWithAuth(currentSession.session.user);
+      return synced;
+    }
+
+    return null;
+  } catch (err) {
+    console.error('[Auth] Error processing auth redirect:', err);
+    return null;
+  }
+}
+
+let isAuthListenerInitialized = false;
+
+/**
+ * Initializes global Supabase Auth listener and handles OAuth redirects.
+ * Safe to call multiple times (idempotent).
+ */
+export function setupAuthListener(): void {
+  if (typeof window === 'undefined' || isAuthListenerInitialized) return;
+  isAuthListenerInitialized = true;
+
+  // Process any pending OAuth URL redirect on page load
+  handleAuthRedirect();
+
+  // Listen to Supabase Auth lifecycle events
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (
+      event === 'SIGNED_IN' ||
+      event === 'INITIAL_SESSION' ||
+      event === 'TOKEN_REFRESHED' ||
+      event === 'USER_UPDATED'
+    ) {
+      if (session?.user) {
+        await syncUserProfileWithAuth(session.user);
+      }
+    } else if (event === 'SIGNED_OUT') {
+      const defaultGuest = getSavedUserProfile();
+      notifyUserProfileListeners(defaultGuest);
+    }
+  });
 }
 
 /**

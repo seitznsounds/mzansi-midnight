@@ -10,6 +10,7 @@ import {
   signOutUser,
   syncUserProfileWithAuth,
   saveUserProfile,
+  subscribeToUserProfile,
   backupProgressToCloud,
   restoreProgressFromCloud,
 } from '../engine/cloudSync';
@@ -49,6 +50,15 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     type: 'success' | 'error' | 'loading' | null;
     message: string;
   }>({ type: null, message: '' });
+
+  // Subscribe to real-time profile updates
+  useEffect(() => {
+    const unsubscribe = subscribeToUserProfile((p) => {
+      setProfile(p);
+      setCallsignInput(p.displayName);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Load profile and achievements on open
   useEffect(() => {

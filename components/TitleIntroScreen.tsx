@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { soundscape } from '../engine/soundscape';
 import { SaveSlotId, SaveSlotRecord } from '../types/settings';
 import { EndingId } from '../types/game';
@@ -32,7 +32,7 @@ import {
 } from '../engine/i18n';
 import { LeaderboardModal } from './LeaderboardModal';
 import { UserProfileModal } from './UserProfileModal';
-import { getSavedUserProfile } from '../engine/cloudSync';
+import { getSavedUserProfile, subscribeToUserProfile, setupAuthListener } from '../engine/cloudSync';
 import { UserProfile } from '../types/leaderboard';
 
 type IntroMenuTab = 'main' | 'campaign' | 'new' | 'load' | 'archive' | 'briefing';
@@ -363,6 +363,15 @@ export const TitleIntroScreen: React.FC<{
     getSavedUserProfile()
   );
 
+  // Initialize and listen to real-time auth changes & OAuth redirects
+  useEffect(() => {
+    setupAuthListener();
+    const unsubscribe = subscribeToUserProfile((updatedProfile) => {
+      setUserProfile(updatedProfile);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const handleSelectStory = (storyId: StoryId) => {
     setActiveStory(storyId);
     const updated = loadCampaignProgression();
@@ -442,10 +451,24 @@ export const TitleIntroScreen: React.FC<{
               className="px-2.5 py-1 rounded bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/50 text-cyan-300 uppercase tracking-wider cursor-pointer transition-colors flex items-center gap-1.5"
               title={t('profile.tooltip', 'Operative Profile, Google Login & Cloud Backup', lang)}
             >
-              <span>👤</span>
+              {userProfile.avatarUrl ? (
+                <img
+                  src={userProfile.avatarUrl}
+                  alt={userProfile.displayName}
+                  className="w-4 h-4 rounded-full border border-cyan-400/60 object-cover"
+                />
+              ) : (
+                <span>👤</span>
+              )}
               <span className="hidden sm:inline">
                 {userProfile.isGuest ? t('auth.sign_in', 'Sign in', lang) : userProfile.displayName}
               </span>
+              {!userProfile.isGuest && (
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5"
+                  title="Google Verified"
+                />
+              )}
             </button>
 
             <span className="text-zinc-400 hidden md:inline uppercase">
