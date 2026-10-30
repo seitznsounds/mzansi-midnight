@@ -92,7 +92,7 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className={`fixed bottom-24 sm:bottom-20 right-3 sm:right-6 z-40 w-full max-w-md sm:max-w-lg rounded-2xl border-2 backdrop-blur-xl shadow-2xl p-4 sm:p-5 select-none transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in ${tierColors.border} ${tierColors.bg} ${tierColors.glow}`}
+      className={`fixed bottom-24 sm:bottom-20 right-3 sm:right-6 left-3 sm:left-auto z-40 w-auto sm:w-full sm:max-w-lg rounded-2xl border-2 backdrop-blur-xl shadow-2xl p-4 sm:p-5 select-none transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in ${tierColors.border} ${tierColors.bg} ${tierColors.glow}`}
     >
       {/* ADRENALINE SCANNER HEADER */}
       <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 mb-2.5 text-[10px] font-mono uppercase tracking-wider">

@@ -905,9 +905,9 @@ export const ConspiracyBoardModal: React.FC<{
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-5 select-none font-sans">
-      <div className="w-full max-w-5xl rounded-2xl border border-red-500/40 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="w-full max-w-5xl rounded-2xl border border-red-500/40 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]">
         {/* TOP HEADER */}
-        <div className="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-zinc-900 via-red-950/30 to-zinc-900 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-zinc-900 via-red-950/30 to-zinc-900 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-2.5">
           <div>
             <div className="flex items-center gap-2 font-mono text-[10px] sm:text-xs uppercase tracking-widest text-red-400">
               <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -927,8 +927,8 @@ export const ConspiracyBoardModal: React.FC<{
             </h2>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-lg bg-zinc-900 p-0.5 border border-zinc-800 font-mono text-[11px]">
+          <div className="flex items-center gap-2 max-w-full">
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[260px] sm:max-w-none rounded-lg bg-zinc-900 p-0.5 border border-zinc-800 font-mono text-[11px] shrink">
               <button
                 onClick={() => {
                   soundscape.playDieSelect();
@@ -936,7 +936,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'act1'
                     ? 'bg-red-500/25 text-red-200 border border-red-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -951,7 +951,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'act2'
                     ? 'bg-red-500/25 text-red-200 border border-red-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -966,7 +966,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'highveld'
                     ? 'bg-amber-500/25 text-amber-200 border border-amber-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -981,7 +981,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'namaqua'
                     ? 'bg-orange-500/25 text-orange-200 border border-orange-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -996,7 +996,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'cape'
                     ? 'bg-purple-500/25 text-purple-200 border border-purple-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -1011,7 +1011,7 @@ export const ConspiracyBoardModal: React.FC<{
                   setSelectedPinId(null);
                   setSelectedLinkId(null);
                 }}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   boardMode === 'national'
                     ? 'bg-amber-500/25 text-amber-200 border border-amber-500/50 font-semibold'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -1026,7 +1026,7 @@ export const ConspiracyBoardModal: React.FC<{
                 soundscape.playDieSelect();
                 onClose();
               }}
-              className="px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 font-mono text-xs text-zinc-300 hover:text-white cursor-pointer"
+              className="px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 font-mono text-xs text-zinc-300 hover:text-white cursor-pointer shrink-0"
             >
               {t('board.esc', '✕ ESC', lang)}
             </button>
