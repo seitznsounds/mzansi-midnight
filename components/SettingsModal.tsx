@@ -344,6 +344,28 @@ export const SettingsModal: React.FC<{
             </div>
           )}
 
+          {/* 5. PRIVACY & POPIA COMPLIANCE */}
+          <div className="pt-2 border-t border-zinc-800 space-y-2">
+            <div className="text-xs font-mono uppercase tracking-wider text-cyan-400 flex items-center justify-between">
+              <span>05 // Privacy &amp; POPIA Compliance</span>
+              <span className="text-[10px] text-zinc-500 font-mono">Act 4 of 2013</span>
+            </div>
+            <div className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="text-zinc-400 leading-relaxed">
+                Save dossiers and game settings stay on your device. Cloud data is processed under South Africa&rsquo;s POPIA.
+              </div>
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-amber-300 border border-amber-500/30 hover:border-amber-400 font-mono text-xs flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+              >
+                <span>Read Policy</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+
           <div className="pt-2 flex justify-end">
             <button
               onClick={() => {

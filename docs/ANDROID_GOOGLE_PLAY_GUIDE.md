@@ -117,3 +117,8 @@ android/app/build/outputs/bundle/release/app-release.aab
 4. **Target Audience & Target SDK**:
    - Target SDK: 36 (exceeds Google Play's minimum requirement of API 34).
    - Category: Games > Role-Playing / Strategy.
+5. **Privacy Policy & POPIA Compliance (Mandatory for Google Play)**:
+   - **Privacy Policy URL**: `https://<your-domain>/privacy` (hosted at your production domain from `app/privacy/page.tsx`).
+   - **In-App Disclosure**: Accessible in-game via the title screen footer, the Settings Modal (`05 // Privacy & POPIA Compliance`), and the User Profile modal.
+   - **Data Disclosures**: Details local offline storage (`localStorage`), optional Google OAuth & Supabase cloud backup, public leaderboard scoreboards, and zero third-party advertising or trackers.
+   - **Account Deletion URL / Instructions**: Users can purge all local data in-app or request cloud account/profile erasure by emailing `seitznsounds@gmail.com` in terms of POPIA Section 24 and GDPR Article 17.

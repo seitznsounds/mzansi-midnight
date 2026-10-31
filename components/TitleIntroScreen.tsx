@@ -2086,6 +2086,28 @@ export const TitleIntroScreen: React.FC<{
             </div>
           )}
         </div>
+
+        {/* CARD FOOTER: VERSION, COPYRIGHT & PRIVACY POLICY */}
+        <div className="px-4 sm:px-6 py-3 bg-zinc-900/90 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-2.5 text-[10px] sm:text-xs font-mono text-zinc-400">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-500">v0.1.0</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-zinc-300">Mzansi Midnight</span>
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+            <span className="text-zinc-500 hidden sm:inline">A South African Noir RPG</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-400/90 hover:text-amber-300 underline underline-offset-2 transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <span>Privacy Policy &amp; POPIA Notice</span>
+              <span className="text-[10px]">↗</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* ARCHIVED EPILOGUE READER MODAL */}

@@ -489,6 +489,19 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 )}
               </p>
             )}
+
+            <div className="pt-2 text-[10px] text-white/40 flex items-center justify-between border-t border-white/5">
+              <span>Cloud data is encrypted &amp; governed by POPIA.</span>
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 hover:text-amber-300 underline underline-offset-1 flex items-center gap-0.5"
+              >
+                <span>Privacy Notice</span>
+                <span>↗</span>
+              </a>
+            </div>
           </div>
 
           {/* Achievements Accolades Section */}
