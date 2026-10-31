@@ -100,7 +100,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
       aria-labelledby="leaderboard-title"
       className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
     >
-      <div className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-[#0b0f14] border-2 border-amber-500/40 rounded-xl shadow-2xl shadow-amber-950/40 overflow-hidden">
+      <div className="relative w-full max-w-5xl max-h-[92dvh] flex flex-col bg-[#0b0f14] border-2 border-amber-500/40 rounded-xl shadow-2xl shadow-amber-950/40 overflow-hidden">
         {/* Top Decorative Tactical Strip */}
         <div className="h-1.5 w-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-700" />
 
