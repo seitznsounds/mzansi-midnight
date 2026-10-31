@@ -247,18 +247,19 @@ export const SettingsModal: React.FC<{
                 03 // Language &amp; Localisation
               </div>
               <span className="text-[10px] font-mono text-amber-400 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-600/40">
-                11 Official Languages
+                {SUPPORTED_LANGUAGES.length} Official Languages
               </span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2.5">
               <div className="text-xs text-zinc-300">
-                Choose your preferred interface language. All district names, clocks, and narrative reports will adjust automatically:
+                Choose your preferred interface language across all {SUPPORTED_LANGUAGES.length} official South African languages. All district names, clocks, and narrative reports will adjust automatically:
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
-                {SUPPORTED_LANGUAGES.map((lang) => {
+                {SUPPORTED_LANGUAGES.map((lang, idx) => {
                   const isSelected = (settings.language ?? 'en') === lang.code;
+                  const isLastOdd = idx === SUPPORTED_LANGUAGES.length - 1 && SUPPORTED_LANGUAGES.length % 2 !== 0;
                   return (
                     <button
                       key={lang.code}
@@ -271,6 +272,8 @@ export const SettingsModal: React.FC<{
                         onUpdateSettings(next);
                       }}
                       className={`p-2.5 rounded-lg border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                        isLastOdd ? 'col-span-2 sm:col-span-1' : ''
+                      } ${
                         isSelected
                           ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.25)]'
                           : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200'
@@ -280,9 +283,14 @@ export const SettingsModal: React.FC<{
                         <span className={`font-semibold text-xs ${isSelected ? 'text-amber-300' : 'text-zinc-200'}`}>
                           {lang.nativeName}
                         </span>
-                        <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
-                          {lang.code}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] font-mono text-zinc-500">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                            {lang.code}
+                          </span>
+                        </div>
                       </div>
                       <div className="text-[10px] text-zinc-500 truncate mt-0.5">
                         {lang.name} • {lang.region}

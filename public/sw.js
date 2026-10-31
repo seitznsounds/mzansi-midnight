@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mzansi-midnight-v1';
+const CACHE_NAME = 'mzansi-midnight-v2';
 const PRECACHE_URLS = [
   '/',
   '/manifest.json',
@@ -33,6 +33,23 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  // Network-first for navigation/HTML requests so updates are never trapped behind stale PWA cache
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate / cache-first for static assets
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const networkFetch = fetch(event.request)
