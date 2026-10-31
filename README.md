@@ -66,17 +66,18 @@ flowchart TD
 
 ---
 
-## 🌍 Multilingual Localization (10 Official South African Languages)
+## 🌍 Multilingual Localization (All 11 Official South African Languages)
 
-*Mzansi Midnight* is localized across **10 official South African languages** with deep cultural nuance:
+*Mzansi Midnight* is localized across **all 11 official South African languages** with deep cultural nuance:
 
 | Code | Language | Code | Language |
 | :--- | :--- | :--- | :--- |
-| `en` | English (Master Source) | `nso` | Sepedi (Northern Sotho) |
-| `zu` | isiZulu | `tn` | Setswana |
-| `xh` | isiXhosa | `ts` | Xitsonga |
-| `af` | Afrikaans | `ss` | Siswati |
-| `st` | Sesotho | `ve` | Tshivenḓa |
+| `en` | English (Master Source) | `tn` | Setswana |
+| `zu` | isiZulu | `ts` | Xitsonga |
+| `xh` | isiXhosa | `ss` | siSwati |
+| `af` | Afrikaans | `ve` | Tshivenḓa |
+| `st` | Sesotho | `nr` | isiNdebele |
+| `nso` | Sepedi (Northern Sotho) | | |
 
 Includes dynamic reverse mapping, retrospective narrative log translation, and real-time dialect adaptation for tactical advice and dialogue.
 
@@ -148,10 +149,10 @@ npm start
 ├── app/                  # Next.js 15 App router & layouts
 ├── components/           # UI components (Map, Dashboard, Conspiracy Board, Modals)
 ├── data/                 # Game data, story states, item catalogs, event decks
-│   └── i18n/             # 10 official South African language translation dictionaries
+│   └── i18n/             # All 11 official South African language translation dictionaries
 ├── docs/                 # Architectural blueprints & translation guidelines
 ├── engine/               # Pure functional game engine, state resolvers & soundscape
-│   └── __tests__/        # Automated Vitest test suites (107 tests)
+│   └── __tests__/        # Automated Vitest test suites (124 tests)
 ├── public/               # Static assets, graphic novel illustrations & PWA manifest
 ├── scripts/              # I18n generators, asset generation & translation scripts
 └── types/                # TypeScript interfaces and game engine types

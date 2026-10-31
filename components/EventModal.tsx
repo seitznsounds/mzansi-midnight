@@ -214,12 +214,12 @@ export const EventModal: React.FC<{
                       : 'bg-zinc-950 border-zinc-900 opacity-45 cursor-not-allowed'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <span className="text-sm font-medium text-zinc-100">
                       {choice.label}
                     </span>
                     {!allowed && (
-                      <span className="text-xs font-mono text-red-400 bg-red-950/40 px-2 py-0.5 rounded">
+                      <span className="text-xs font-mono text-red-400 bg-red-950/40 px-2 py-0.5 rounded self-start sm:self-auto">
                         {t('events.locked', 'LOCKED', lang)}: {reason}
                       </span>
                     )}

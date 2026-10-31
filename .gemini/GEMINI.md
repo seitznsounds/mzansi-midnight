@@ -75,12 +75,12 @@ In **Story 1: eThekwini-Gold**, players take on the role of a suspended Hawks (D
 
 - **`STORIES.md`**: Master narrative bible and campaign progression architecture for the 5-story Mzansi Midnight Quintet (*eThekwini-Gold*, *Highveld-Chrome*, *Namaqua-Diamond*, *Cape-Nocturne*, and *The Sovereign Octagon*).
 - **`docs/`**
-  - `docs/STORY_TRANSLATION_BLUEPRINT.md`: Comprehensive master architectural blueprint and developer specification for localizing game stories across all 10 South African official regional languages, documenting dictionary schemas, component hooks, reverse mapping mechanics, and guidelines for authoring future modular narrative campaigns.
+  - `docs/STORY_TRANSLATION_BLUEPRINT.md`: Comprehensive master architectural blueprint and developer specification for localizing game stories across all 11 South African official languages, documenting dictionary schemas, component hooks, reverse mapping mechanics, and guidelines for authoring future modular narrative campaigns.
 - **`types/`**
   - `types/game.ts`: Core types (`GameState`, `MapNode`, `ActionSlot`, `Clock`, `Die`, `StatType`, `FactionId`, `FactionPerkId`, `LoadSheddingStage`, `EndingId`).
   - `types/events.ts`: `NarrativeEvent` and `EventChoice` interfaces (with `requiredCash`, `requiredItem`, `requiredAnyItem`, `requiredStat`, `requiredFactionRep`, `triggerEndingId`).
   - `types/prologue.ts`: `CharacterBackground`, `DialogueOption`, and `PrologueSceneNode`.
-  - `types/settings.ts`: `SaveSlotId` (`'autosave' | 'slot_1' | 'slot_2' | 'slot_3'`), `SaveSlotRecord`, and `GameSettings` (including `LanguageCode` across all 10 official South African regional languages, `diceDisplayMode`, and procedural soundscape volume levels).
+  - `types/settings.ts`: `SaveSlotId` (`'autosave' | 'slot_1' | 'slot_2' | 'slot_3'`), `SaveSlotRecord`, and `GameSettings` (including `LanguageCode` across all 11 official South African languages, `diceDisplayMode`, and procedural soundscape volume levels).
 - **`data/`**
   - `data/initialState.ts`: Seed state for Act 1, including all 6 clocks (`mokoena_sweep`, `nandi_condition`, `precinct_heat`, `audit_docket_409`, `crack_auditor_phone`, `berth_14_countdown`) and all 7 CBD/Waterfront nodes with SVG coordinates and action slots.
   - `data/act2State.ts`: Act 2 campaign state (`ACT_2_CLOCKS`, `ACT_2_NODES` `n8_ridge_penthouses`–`n12_cargo_apron`, and `transitionToAct2()` state carryover from Act 1).
@@ -97,7 +97,7 @@ In **Story 1: eThekwini-Gold**, players take on the role of a suspended Hawks (D
   - `data/story3NamaquaState.ts`, `data/story3NamaquaPrologue.ts`, `data/story3NamaquaDialogues.ts`, `data/story3NamaquaEvents.ts`, `data/story3NamaquaEndings.ts`: Story 3 Namaqua-Diamond campaign state, 7 nodes, 6 clocks, fog & decompression mechanics, 5 faction perks, and 4 endings.
   - `data/story4CapeState.ts`, `data/story4CapePrologue.ts`, `data/story4CapeDialogues.ts`, `data/story4CapeEvents.ts`, `data/story4CapeEndings.ts`: Story 4 Cape-Nocturne campaign state, 7 nodes, 6 clocks, gang crossfire & gale mechanics, 5 faction perks, and 4 endings.
   - `data/story5OctagonState.ts`, `data/story5OctagonPrologue.ts`, `data/story5OctagonDialogues.ts`, `data/story5OctagonEvents.ts`, `data/story5OctagonEndings.ts`: Story 5 The Sovereign Octagon grand national finale, 7 national command nodes (`o1`–`o7`), 6 clocks, 5 national factions with daily tactical perks, 5 contact dialogues, and 5 grand epilogues.
-  - `data/i18n/*.json`: Canonical English master dictionary (`en.json`) and 9 full South African official language dictionaries (`zu`, `xh`, `af`, `st`, `nso`, `tn`, `ts`, `ss`, `ve`), each with exactly 1,836 synchronized canonical keys across all 5 stories with 0 missing keys.
+  - `data/i18n/*.json`: Canonical English master dictionary (`en.json`) and 10 full South African official language dictionaries (`zu`, `xh`, `af`, `st`, `nso`, `tn`, `ts`, `ss`, `ve`, `nr`), each with 2,041 synchronized canonical keys across all 5 stories with 0 missing keys.
 - **`engine/`**
   - `engine/resolver.ts`: Pure state functions `resolveActionSlot()`, `advanceToNextDay()`, `travelToNode()`, `activateGeneratorDiesel()`, `activateFactionPerk()`, `getHostileTurfPenalty()`, `purchaseBlackMarketGear()`, `applyDialogueReward()`, and roadblock helpers across both Act 1 and Act 2, plus all 25 faction standing perks across Stories 1–5.
   - `engine/eventResolver.ts`: Pure state function `resolveTriggeredEvent()` handling multi-choice event consequences, clock completion triggers, and ending transitions.
@@ -115,24 +115,24 @@ In **Story 1: eThekwini-Gold**, players take on the role of a suspended Hawks (D
     - `engine/__tests__/story4Cape.test.ts` (16 tests): Story 4 Cape-Nocturne state initialization, 7 nodes, 6 clocks, gang crossfire & gale mechanics, 5 faction perks, contact dialogues, 4 endings, and Keystone extraction unlocking Story 5.
     - `engine/__tests__/story5Octagon.test.ts` (22 tests): Story 5 The Sovereign Octagon state initialization, 7 national nodes, 6 clocks, 5 national factions with tactical perks, 5 contact dialogues, event deck & climax, and 5 grand epilogues.
     - `engine/__tests__/engine.test.ts` (17 tests): Core roll math, load shedding lockouts, daily clock progression, roadblocks, faction perks, black-market gear, dialogue rewards, Act 2 carryover, and tactical advisor grading.
-    - `engine/__tests__/i18n.test.ts` (18 tests): Comprehensive multilingual translation coverage across all 10 South African languages, verifying UI labels, dynamic reverse mapping, clock types, contact roles, prologue nodes, dialogue notifications, rewards, and speaker moods.
+    - `engine/__tests__/i18n.test.ts` (19 tests): Comprehensive multilingual translation coverage across all 11 South African languages, verifying UI labels, dynamic reverse mapping, clock types, contact roles, prologue nodes, dialogue notifications, rewards, speaker moods, and authentic isiNdebele resolution.
   - `engine/storage.ts`: Multi-slot save manager (`loadAllSaveSlots`, `writeSaveSlot`, `deleteSaveSlot`, legacy v1 auto-migration), persistent 8-ending Case Archive (`loadUnlockedEndings`, `recordUnlockedEnding`), and user settings (`loadSettings`, `saveSettings`, `clearAllSavesAndTutorial`).
   - `engine/soundscape.ts`: Zero-dependency Web Audio API procedural soundscape (filtered pink-noise coastal rain, 55Hz Eskom transformer hum that shifts pitch on Stage 6 blackouts, tabletop dice clicks, roll outcome chords, crisis alert tones, dynamic double-pulse heartbeat scaling with adrenaline, encrypted scanner squelch, and cutscene brass/sub-bass stingers) with independent ambient and SFX gain sliders.
   - `engine/adrenaline.ts`: Pure evaluation function calculating real-time narrative tension and adrenaline (levels 1–5: `COVERT`, `ALERT`, `TENSION`, `CRITICAL`, `CLIMAX`) based on climax clock countdowns, threat saturation, and composure levels.
 - **`components/`**
   - `components/TitleIntroScreen.tsx`: Cinematic Case File `#409-ZA` Main Menu with custom widescreen key art (`title_keyart.jpg`), **New Game** slot & mode launcher (Act 1 Prologue, Act 1 Map, or Act 2 Direct), **Load Game** 4-slot dossier inspector, **Case Endings (`X/8`)** epilogue archive gallery, **Settings** launcher, and comprehensive 6-pillar **Help & Manual**.
-  - `components/SettingsModal.tsx`: Persistent System & Audio Configuration modal with Master Mute, Ambient & SFX volume sliders (`0–100%`), Tactical Dice Face Style (`123` Numbers vs. `⚄` Dots), Reduce Blackout Screen Flicker toggle, Auto-Show Field Guide toggle, 10-language localizer switcher, and two-step save-data purge.
+  - `components/SettingsModal.tsx`: Persistent System & Audio Configuration modal with Master Mute, Ambient & SFX volume sliders (`0–100%`), Tactical Dice Face Style (`123` Numbers vs. `⚄` Dots), Reduce Blackout Screen Flicker toggle, Auto-Show Field Guide toggle, 11-language localizer switcher, and two-step save-data purge.
   - `components/PrologueScreen.tsx`: Interactive Scene 1 intro and background selector with custom noir artwork, dynamic personalized "Select This Background: {title}" confirmation buttons, localized active selection badges, localized stat check requirements, and localized action feedback banners.
   - `components/GameDashboard.tsx`: Responsive HUD supporting both a 3-column desktop command center (`lg:`) with full keyboard shortcuts (`1–5`, `Tab`, `Space`, `D`, `B`, `Esc`) and a mobile-first 3-tab tactical switcher (`1. District Map`, `2. Node Actions`, `3. Clocks & Turf`) with localized Left Menu, NPC Contact Cards (`Speak with Contact`), Black-Market Gear shop, persistent bottom Dice Dock (`[123 / ⚄]` switcher), real-time Adrenaline & Tension status meter, in-slot live outcome badges, `◈ BOARD`, `? GUIDE`, manual `SAVE`, `⚙ SETTINGS`, and `MENU` buttons.
   - `components/ActionOutcomeDispatch.tsx`: Floating, non-intrusive encrypted Hawks/SAPS scanner comms HUD with dynamic 5-tier ascending adrenaline visuals, dice math chips, audio scanner squelch, auto-dismiss countdown bar, and manual dismissal.
   - `components/AdrenalineVignette.tsx`: Viewport edge tension pulse and tactical reticle accents scaling dynamically from subtle noir darkness to rapid hazard crimson strobe.
   - `components/CutsceneModal.tsx`: 2.39:1 widescreen cinematic letterbox cutscene viewer with Ken Burns pan/zoom, beat-by-beat narrative crawl, audio stingers, and keyboard controls.
-  - `components/ConspiracyBoardModal.tsx`: Interactive SVG red-string corkboard & forensic link inspector mapping suspects, shell companies, and evidence exhibits across Act 1 and Act 2, fully localized across all 10 South African regional languages.
+  - `components/ConspiracyBoardModal.tsx`: Interactive SVG red-string corkboard & forensic link inspector mapping suspects, shell companies, and evidence exhibits across Act 1 and Act 2, fully localized across all 11 South African official languages.
   - `components/ContactDialogueModal.tsx`: Interactive NPC conversation & interrogation modal with live stat checks, evidence presentation, faction standing badges, one-time favor claim tracking, localized `INTEL SECURED:` notifications, localized dismiss actions, localized speaker moods, and localized reward summaries.
   - `components/EvidenceDossierModal.tsx`: Interactive forensic document & hardware specification reader for all evidence items and black-market upgrades.
   - `components/DistrictSvgMap.tsx`: Tactical SVG map across all 5 stories with deconflicted node coordinates, bespoke cartographic regional map backgrounds (`public/assets/maps/`), a touch-scrollable mobile quick-select Node Pill Strip, sector columns, SAPS roadblock warnings, and fog-of-war locked leads.
   - `components/ObjectiveTracker.tsx`: Context-aware dynamic objective & next-step hint banner with 3-step Campaign Progress Bar and one-click `"Show Slot →"` navigation.
-  - `components/TutorialOverlay.tsx`: 6-step interactive HUD walkthrough & Field Rules modal (auto-opens on first map visit or via `? GUIDE`), fully translated across all 10 languages.
+  - `components/TutorialOverlay.tsx`: 6-step interactive HUD walkthrough & Field Rules modal (auto-opens on first map visit or via `? GUIDE`), fully translated across all 11 languages.
   - `components/ThreatClock.tsx`: Pure SVG circular segmented clock renderer with localized clock titles, types, and trigger badges.
   - `components/EventModal.tsx`: Scroll-safe high-priority modal for triggered threat crises, breakthroughs, and the Berth 14 / Hangar 7 finale choices.
   - `components/EndingScreen.tsx`: Full-screen multi-phase cinematic epilogue showcase with 16:9 widescreen artwork, summary quote, epilogue narrative, district power shifts, and Fixer Registry Leaderboard.
@@ -159,16 +159,17 @@ In **Story 1: eThekwini-Gold**, players take on the role of a suspended Hawks (D
 ## Multilingual Localization Architecture (10 South African Languages)
 
 Mzansi Midnight features deep, zero-compromise localization across **all 10 official South African regional languages**:
-- `en` — English (Master Canonical Source — 1,836 keys)
-- `zu` — isiZulu (1,836 keys)
-- `xh` — isiXhosa (1,836 keys)
-- `af` — Afrikaans (1,836 keys)
-- `st` — Sesotho (1,836 keys)
-- `nso` — Sepedi / Northern Sotho (1,836 keys)
-- `tn` — Setswana (1,836 keys)
-- `ts` — Xitsonga (1,836 keys)
-- `ss` — Siswati (1,836 keys)
-- `ve` — Tshivenḓa (1,836 keys)
+- `en` — English (Master Canonical Source — 2,041 keys)
+- `zu` — isiZulu (2,041 keys)
+- `xh` — isiXhosa (2,041 keys)
+- `af` — Afrikaans (2,041 keys)
+- `st` — Sesotho (2,041 keys)
+- `nso` — Sepedi / Northern Sotho (2,041 keys)
+- `tn` — Setswana (2,041 keys)
+- `ts` — Xitsonga (2,041 keys)
+- `ss` — Siswati (2,041 keys)
+- `ve` — Tshivenḓa (2,041 keys)
+- `nr` — isiNdebele (2,041 keys)
 
 ### Dual-Layer Translation Strategy
 1. **Direct Structured Key Lookup (`t(key, fallback, lang)`)**:

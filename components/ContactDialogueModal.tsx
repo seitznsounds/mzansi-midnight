@@ -97,7 +97,7 @@ export default function ContactDialogueModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6">
-      <div className="relative w-full max-w-2xl rounded-2xl border border-amber-500/40 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-2xl rounded-2xl border border-amber-500/40 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]">
         {/* TOP HEADER WITH NPC PORTRAIT & FACTION STANDING */}
         <div className="flex items-center justify-between gap-3 p-4 sm:p-5 bg-gradient-to-r from-zinc-900 via-zinc-900/95 to-amber-950/25 border-b border-zinc-800">
           <div className="flex items-center gap-3.5">

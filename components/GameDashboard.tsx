@@ -810,6 +810,7 @@ export const GameDashboard: React.FC<{
   const [seenCutsceneIds, setSeenCutsceneIds] = useState<Set<string>>(new Set());
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+  const [isMobileOpsOpen, setIsMobileOpsOpen] = useState<boolean>(false);
   const [userProfile, setUserProfile] = useState<UserProfile>(() =>
     getSavedUserProfile()
   );
@@ -1328,8 +1329,53 @@ export const GameDashboard: React.FC<{
             </span>
           </div>
 
-          {/* BOARD, GUIDE, SCORES, VAULT, SAVE, SETTINGS & MENU CONTROLS */}
-          <div className="flex items-center gap-1.5 sm:gap-2 lg:border-l lg:border-zinc-800 lg:pl-4">
+          {/* MOBILE QUICK ACTION CONTROLS (<1024px) */}
+          <div className="flex lg:hidden items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                soundscape.playDieSelect();
+                setIsBoardOpen(true);
+              }}
+              className="px-2 py-1 rounded bg-red-500/15 border border-red-500/50 hover:border-red-400 text-[11px] text-red-300 cursor-pointer flex items-center gap-1 font-mono transition-colors"
+              title="Open Conspiracy Board"
+            >
+              ◈ <span className="hidden xs:inline">{t('ui.board', 'BOARD', currentLang)}</span>
+            </button>
+            {onManualSave && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playOutcome('clean');
+                  onManualSave(state);
+                  setSaveFlash(true);
+                  setTimeout(() => setSaveFlash(false), 1500);
+                }}
+                className={`px-2 py-1 rounded border text-[11px] font-mono cursor-pointer transition-colors ${
+                  saveFlash
+                    ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                    : 'bg-zinc-900 border-zinc-700 hover:border-emerald-500/60 text-zinc-300'
+                }`}
+                title="Quick Save"
+              >
+                {saveFlash ? '✓' : '💾'} <span className="hidden xs:inline">{saveFlash ? t('ui.saved', 'SAVED', currentLang) : t('ui.save', 'SAVE', currentLang)}</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                soundscape.playDieSelect();
+                setIsMobileOpsOpen(true);
+              }}
+              className="px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[11px] text-amber-200 font-mono font-bold cursor-pointer flex items-center gap-1 transition-colors"
+              title="Tactical Operations Menu"
+            >
+              ☰ {t('ui.ops', 'OPS', currentLang)}
+            </button>
+          </div>
+
+          {/* DESKTOP EXTENDED CONTROLS (>=1024px) */}
+          <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 lg:border-l lg:border-zinc-800 lg:pl-4">
             <button
               onClick={() => {
                 soundscape.playDieSelect();
@@ -2182,7 +2228,7 @@ export const GameDashboard: React.FC<{
       </div>
 
       {/* 3. PERSISTENT ONE-THUMB BOTTOM DICE DOCK & END TURN */}
-      <footer className="border-t border-zinc-800 bg-zinc-950 px-3 sm:px-8 py-2.5 lg:py-0 lg:h-20 flex flex-wrap items-center justify-between gap-2 shrink-0">
+      <footer className="border-t border-zinc-800 bg-zinc-950 px-3 sm:px-8 py-2.5 lg:py-0 lg:h-20 flex flex-wrap items-center justify-between gap-2 shrink-0 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5 mr-0.5 sm:mr-1">
             <div className="hidden sm:flex flex-col text-left mr-1">
@@ -2518,6 +2564,205 @@ export const GameDashboard: React.FC<{
         onProfileUpdated={(p) => setUserProfile(p)}
         lang={currentLang}
       />
+
+      {/* 15. MOBILE TACTICAL OPERATIONS SHEET (<1024px) */}
+      {isMobileOpsOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Tactical Operations Menu"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm p-0 sm:p-4 select-none animate-in fade-in duration-150"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsMobileOpsOpen(false);
+          }}
+        >
+          <div className="w-full sm:max-w-md bg-zinc-950 border-t sm:border border-amber-500/40 sm:rounded-2xl shadow-2xl p-4 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex flex-col gap-3 font-mono">
+            {/* Sheet Header */}
+            <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <span className="text-amber-400 font-bold text-sm tracking-wider uppercase">
+                  ⚡ {t('ui.tactical_ops', 'Tactical Operations', currentLang)}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-400 font-mono">
+                  {state.storyId === 'story_4_cape'
+                    ? 'CAPE-NOCTURNE'
+                    : state.storyId === 'story_3_namaqua'
+                    ? 'NAMAQUA-DIAMOND'
+                    : state.storyId === 'story_2_highveld'
+                    ? 'HIGHVELD-COAL'
+                    : 'ETHEKWINI'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileOpsOpen(false)}
+                className="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Quick Summary Strip */}
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2 rounded bg-zinc-900/60 border border-zinc-800 flex flex-col">
+                <span className="text-[10px] text-zinc-500 uppercase">{t('ui.operative', 'Operative', currentLang)}</span>
+                <span className="text-zinc-200 font-semibold truncate">
+                  {userProfile.isGuest ? 'Guest Operative' : userProfile.displayName}
+                </span>
+              </div>
+              <div className="p-2 rounded bg-zinc-900/60 border border-zinc-800 flex flex-col">
+                <span className="text-[10px] text-zinc-500 uppercase">{t('ui.time_elapsed', 'Elapsed', currentLang)}</span>
+                <span className="text-cyan-400 font-semibold">
+                  ⏱️ {formatSpeedrunTime(elapsedSeconds)}
+                </span>
+              </div>
+            </div>
+
+            {/* Tactical Action Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 max-h-[60vh] overflow-y-auto no-scrollbar">
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsMobileOpsOpen(false);
+                  setIsMissionStatusOpen(true);
+                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-left text-amber-200 text-xs transition-colors cursor-pointer"
+              >
+                <span className="text-base shrink-0">📋</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold">{t('ui.status', 'MISSION STATUS', currentLang)}</span>
+                  <span className="text-[10px] text-zinc-400 truncate">Objectives, clocks & manual</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsMobileOpsOpen(false);
+                  setIsBoardOpen(true);
+                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/40 text-left text-red-200 text-xs transition-colors cursor-pointer"
+              >
+                <span className="text-base shrink-0">◈</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold">{t('ui.board', 'CONSPIRACY BOARD', currentLang)}</span>
+                  <span className="text-[10px] text-zinc-400 truncate">Syndicate web & evidence links</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsMobileOpsOpen(false);
+                  setIsLeaderboardOpen(true);
+                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-left text-amber-200 text-xs transition-colors cursor-pointer"
+              >
+                <span className="text-base shrink-0">🏆</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold">{t('ui.scores', 'LEADERBOARDS', currentLang)}</span>
+                  <span className="text-[10px] text-zinc-400 truncate">Records & 25-ending runs</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsMobileOpsOpen(false);
+                  setIsProfileOpen(true);
+                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/40 text-left text-cyan-300 text-xs transition-colors cursor-pointer"
+              >
+                <span className="text-base shrink-0">👤</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold">OPERATIVE VAULT</span>
+                  <span className="text-[10px] text-zinc-400 truncate">Google sync & callsign handle</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsMobileOpsOpen(false);
+                  setIsGuideOpen(true);
+                }}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-left text-zinc-300 text-xs transition-colors cursor-pointer"
+              >
+                <span className="text-base shrink-0">📖</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold">{t('ui.guide', 'FIELD GUIDE', currentLang)}</span>
+                  <span className="text-[10px] text-zinc-400 truncate">Rules & dice mechanics</span>
+                </div>
+              </button>
+
+              {onManualSave && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundscape.playOutcome('clean');
+                    onManualSave(state);
+                    setSaveFlash(true);
+                    setTimeout(() => setSaveFlash(false), 1500);
+                  }}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left text-xs transition-colors cursor-pointer ${
+                    saveFlash
+                      ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                      : 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300'
+                  }`}
+                >
+                  <span className="text-base shrink-0">{saveFlash ? '✓' : '💾'}</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-semibold">{saveFlash ? 'CHECKPOINT SAVED' : t('ui.save', 'SAVE CHECKPOINT', currentLang)}</span>
+                    <span className="text-[10px] text-zinc-400 truncate">Sync state to local & cloud</span>
+                  </div>
+                </button>
+              )}
+
+              {onOpenSettings && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundscape.playDieSelect();
+                    setIsMobileOpsOpen(false);
+                    onOpenSettings();
+                  }}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-left text-zinc-300 text-xs transition-colors cursor-pointer"
+                >
+                  <span className="text-base shrink-0">⚙️</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-semibold">{t('ui.settings', 'SETTINGS', currentLang)}</span>
+                    <span className="text-[10px] text-zinc-400 truncate">Audio, graphics & language</span>
+                  </div>
+                </button>
+              )}
+
+              {onReturnToMenu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundscape.playDieSelect();
+                    setIsMobileOpsOpen(false);
+                    onReturnToMenu();
+                  }}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-red-950/25 hover:bg-red-900/40 border border-red-800/60 text-left text-red-300 text-xs transition-colors cursor-pointer"
+                >
+                  <span className="text-base shrink-0">↩</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-semibold">{t('ui.menu', 'EXIT TO MENU', currentLang)}</span>
+                    <span className="text-[10px] text-red-400/80 truncate">Return to main screen</span>
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

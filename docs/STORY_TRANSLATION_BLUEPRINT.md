@@ -8,7 +8,7 @@ This document catalogues every translated component, schema convention, runtime 
 
 ## 1. Architectural Overview
 
-Mzansi Midnight uses a high-fidelity localization system designed for all **11 official South African languages** (English canonical master + Afrikaans, isiZulu, isiXhosa, Sesotho, Sepedi, Setswana, Xitsonga, Siswati, and Tshivenda).
+Mzansi Midnight uses a high-fidelity localization system designed for all **11 official South African languages** (English canonical master + Afrikaans, isiZulu, isiXhosa, Sesotho, Sepedi, Setswana, Xitsonga, siSwati, Tshivenḓa, and isiNdebele).
 
 ### Dual-Layer Localization Pipeline
 1. **Static UI & Component Layer (`t(key, fallback, lang)`)**:

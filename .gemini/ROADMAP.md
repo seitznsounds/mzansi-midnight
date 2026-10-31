@@ -453,6 +453,20 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
 
 ---
 
+### Phase 27c: Full 11-Language Official Multilingual Expansion (isiNdebele `nr`) ✅
+- [x] **11th Official Language Integration (`nr` — isiNdebele)**:
+  - Extended `types/settings.ts` to include `'nr'` in `SupportedLanguage` and added Southern Ndebele to `SUPPORTED_LANGUAGES` (`isiNdebele`, `Mpumalanga & Gauteng`).
+  - Integrated `nr.json` into `engine/i18n.ts` runtime bundle and reactive translation engine (`DICTIONARIES.nr`).
+- [x] **Gemini Flash Translation Pipeline (`scripts/translate-ndebele.mjs`)**:
+  - Engineered an automated Gemini translation pipeline utilizing `GEMINI_API_KEY` with authentic South African crime noir dialect prompting, standard Southern Ndebele orthography (relative `-ko`, `tj`/`tjh` phonology), and exponential backoff retry.
+  - Translated all 2,041 canonical master strings into `data/i18n/nr.json`, achieving 100% 1:1 key parity (0 missing keys vs `en.json`).
+  - Updated `scripts/translate-game-data.mjs` with `nr` in `TARGET_LANGUAGES` and authentic `SA_NOIR_GLOSSARY`.
+- [x] **Test Suite & Verification Suite**:
+  - Updated `engine/__tests__/i18n.test.ts` to test all 11 official South African languages, verifying `nr` language info and authentic in-game string resolution.
+  - Verified 100% key parity across all 11 languages with `scripts/audit-translations-and-assets.mjs`.
+
+---
+
 ### Phase 28: Voiceover Stems & Audio Atmosphere Expansion 📋
 - [ ] Authentic multilingual audio voice stabs for key NPC introductions across all official South African languages.
 - [ ] Regional procedural soundscape extensions: Highveld thunder and mine lifts, desert wind and Atlantic shore breaks, Cape Doctor gales, and bunker emergency klaxons.

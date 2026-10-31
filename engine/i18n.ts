@@ -31,6 +31,7 @@ import tn from '../data/i18n/tn.json';
 import ts from '../data/i18n/ts.json';
 import ss from '../data/i18n/ss.json';
 import ve from '../data/i18n/ve.json';
+import nr from '../data/i18n/nr.json';
 
 const DICTIONARIES: Record<SupportedLanguage, Record<string, string>> = {
   en: en as Record<string, string>,
@@ -43,9 +44,10 @@ const DICTIONARIES: Record<SupportedLanguage, Record<string, string>> = {
   ts: ts as Record<string, string>,
   ss: ss as Record<string, string>,
   ve: ve as Record<string, string>,
+  nr: nr as Record<string, string>,
 };
 
-// Antigravity i18n Master Bundle (All 10 SA Official Languages)
+// Antigravity i18n Master Bundle (All 11 SA Official Languages)
 
 /**
  * Look up a localized string for the specified language.

@@ -647,11 +647,11 @@ export const EndingScreen: React.FC<{
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 shrink-0 w-full sm:w-auto">
               {canContinueToAct2 && onContinueToAct2 && (
                 <button
                   onClick={() => onContinueToAct2(endingId)}
-                  className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all cursor-pointer"
+                  className="w-full sm:w-auto text-center px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all cursor-pointer"
                 >
                   {t('ending.continue_act2', 'Continue to Act 2: The Commission →', lang)}
                 </button>
@@ -659,14 +659,14 @@ export const EndingScreen: React.FC<{
               {canNewGamePlus && onStartNewGamePlus && (
                 <button
                   onClick={onStartNewGamePlus}
-                  className="px-5 py-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shadow-[0_0_25px_rgba(168,85,247,0.3)] transition-all cursor-pointer"
+                  className="w-full sm:w-auto text-center px-5 py-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shadow-[0_0_25px_rgba(168,85,247,0.3)] transition-all cursor-pointer"
                 >
                   {t('ending.new_game_plus', 'New Game+ (Keep Gear & +R1,000) →', lang)}
                 </button>
               )}
               <button
                 onClick={onRestart}
-                className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors cursor-pointer"
+                className="w-full sm:w-auto text-center px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors cursor-pointer"
               >
                 {t('ending.new_timeline', 'New Timeline / Main Menu →', lang)}
               </button>

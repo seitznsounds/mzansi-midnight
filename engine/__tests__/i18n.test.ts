@@ -12,9 +12,9 @@ import {
   getLocalizedTextByEnglishValue,
 } from '../i18n';
 
-describe('i18n Localization Engine (9 South African Languages)', () => {
-  it('defines 10 supported languages (English + 9 SA official languages)', () => {
-    expect(SUPPORTED_LANGUAGES).toHaveLength(10);
+describe('i18n Localization Engine (All 11 South African Official Languages)', () => {
+  it('defines 11 supported languages (English + 10 SA official languages)', () => {
+    expect(SUPPORTED_LANGUAGES).toHaveLength(11);
     const codes = SUPPORTED_LANGUAGES.map((l) => l.code);
     expect(codes).toContain('en');
     expect(codes).toContain('zu'); // isiZulu
@@ -26,6 +26,7 @@ describe('i18n Localization Engine (9 South African Languages)', () => {
     expect(codes).toContain('ts'); // Xitsonga
     expect(codes).toContain('ss'); // siSwati
     expect(codes).toContain('ve'); // Tshivenda
+    expect(codes).toContain('nr'); // isiNdebele
   });
 
   it('retrieves language info with native names and regional tags', () => {
@@ -38,6 +39,10 @@ describe('i18n Localization Engine (9 South African Languages)', () => {
 
     const afrikaans = getLanguageInfo('af');
     expect(afrikaans.nativeName).toBe('Afrikaans');
+
+    const ndebele = getLanguageInfo('nr');
+    expect(ndebele.nativeName).toBe('isiNdebele');
+    expect(ndebele.region).toContain('Mpumalanga');
   });
 
   it('returns canonical English string by default', () => {
@@ -53,6 +58,16 @@ describe('i18n Localization Engine (9 South African Languages)', () => {
     const safehouseZulu = t('node.n1_safehouse.title', 'Safehouse', 'zu');
     expect(safehouseZulu).toBeTruthy();
     expect(safehouseZulu).not.toBe('Safehouse');
+  });
+
+  it('resolves authentic isiNdebele translations when language is nr', () => {
+    const cashNdebele = t('ui.cash', 'Cash', 'nr');
+    expect(cashNdebele).toBeTruthy();
+    expect(cashNdebele).not.toBe('Cash');
+
+    const safehouseNdebele = t('node.n1_safehouse.title', 'Safehouse', 'nr');
+    expect(safehouseNdebele).toBeTruthy();
+    expect(safehouseNdebele).not.toBe('Safehouse');
   });
 
   it('falls back cleanly to English if key is not found in language', () => {

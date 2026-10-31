@@ -204,7 +204,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       aria-labelledby="profile-title"
       className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
     >
-      <div className="relative w-full max-w-3xl max-h-[92vh] flex flex-col bg-[#0b0f14] border-2 border-cyan-500/40 rounded-xl shadow-2xl shadow-cyan-950/40 overflow-hidden font-mono">
+      <div className="relative w-full max-w-3xl max-h-[92dvh] flex flex-col bg-[#0b0f14] border-2 border-cyan-500/40 rounded-xl shadow-2xl shadow-cyan-950/40 overflow-hidden font-mono">
         {/* Top Decorative Strip */}
         <div className="h-1.5 w-full bg-gradient-to-r from-cyan-600 via-sky-400 to-cyan-700" />
 
@@ -352,8 +352,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           </div>
 
           {/* Callsign Editor */}
-          <div className="p-3.5 rounded-lg bg-black/40 border border-white/10 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex-1 min-w-[200px]">
+          <div className="p-3.5 rounded-lg bg-black/40 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex-1 min-w-0 sm:min-w-[200px]">
               <div className="flex items-center justify-between mb-1">
                 <label className="text-[11px] text-white/50 uppercase tracking-widest block">
                   {t('profile.callsign_label', 'Operative Callsign', lang)}
@@ -382,7 +382,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <button
               onClick={handleSaveCallsign}
               disabled={!callsignInput.trim() || callsignInput.trim() === profile.displayName}
-              className={`px-4 py-1.5 rounded text-xs font-bold uppercase self-end transition-colors cursor-pointer ${
+              className={`w-full sm:w-auto px-4 py-2 sm:py-1.5 rounded text-xs font-bold uppercase self-stretch sm:self-end transition-colors cursor-pointer text-center ${
                 !callsignInput.trim() || callsignInput.trim() === profile.displayName
                   ? 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
                   : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20'

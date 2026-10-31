@@ -37,6 +37,7 @@ const TARGET_LANGUAGES = [
   { code: 'ts', name: 'Xitsonga', native: 'Xitsonga' },
   { code: 'ss', name: 'siSwati', native: 'siSwati' },
   { code: 've', name: 'Tshivenda', native: 'Tshivenḓa' },
+  { code: 'nr', name: 'isiNdebele', native: 'isiNdebele' },
 ];
 
 async function callOpenRouter(apiKey, prompt) {
@@ -377,6 +378,35 @@ const SA_NOIR_GLOSSARY = {
     Clean: 'Kuna',
     Failure: 'U Kundelwa',
     Success: 'U Bvelela',
+  },
+  nr: {
+    Safehouse: 'Indawo Yokucashela',
+    Police: 'Amapholisa',
+    Precinct: 'Isitetjhi Samapholisa',
+    Station: 'Isitetjhi',
+    Docket: 'Idokhethi',
+    Ledger: 'Incwadi Yezemali',
+    Audit: 'Ukuhlolwa Kwamabhuku',
+    Terminal: 'Itheminali',
+    Harbour: 'Izibuko Lemikhumbi',
+    Archive: 'Ugcimomlando',
+    Basement: 'Ikamarwana Elingaphasi',
+    Wound: 'Inxeba',
+    Sweep: 'Ukutjhanela',
+    Cartel: 'Isiqhema Sezelelesi',
+    Syndicate: 'Ihlangano Yobulelesi',
+    Hitman: 'Umbulali Okhokhelwako',
+    Informant: 'Umtjheli Wendaba',
+    Blackout: 'Ukucima Kwegezi',
+    Cash: 'Ukhetjhi',
+    Composure: 'Ukuzola',
+    Cycle: 'Umjikelezo',
+    Reckoning: 'Ukutjhejwa Kwemilandu',
+    Whistleblower: 'Umdaluli Wemfihlo',
+    Vigilante: 'Umlweli Welungelo',
+    Clean: 'Kuhlanzekile',
+    Failure: 'Kuhlulekile',
+    Success: 'Kuphumelele',
   },
 };
 

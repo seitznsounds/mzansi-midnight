@@ -22,7 +22,8 @@ export type SupportedLanguage =
   | 'tn'
   | 'ts'
   | 'ss'
-  | 've';
+  | 've'
+  | 'nr';
 
 export interface LanguageInfo {
   code: SupportedLanguage;
@@ -72,6 +73,12 @@ export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
   },
   { code: 'ss', name: 'Swati', nativeName: 'siSwati', region: 'Mpumalanga' },
   { code: 've', name: 'Venda', nativeName: 'Tshivenḓa', region: 'Limpopo' },
+  {
+    code: 'nr',
+    name: 'Ndebele',
+    nativeName: 'isiNdebele',
+    region: 'Mpumalanga & Gauteng',
+  },
 ];
 
 export interface GameSettings {

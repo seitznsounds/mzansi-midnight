@@ -160,11 +160,11 @@ When transitioning from one story to the next:
 
 ## 8. Localization & Dialect Authenticity Across the 5 Stories
 
-In accordance with [`docs/STORY_TRANSLATION_BLUEPRINT.md`](file:///c:/Users/Faiz/Documents/workspaces/mzansi-midnight/docs/STORY_TRANSLATION_BLUEPRINT.md), every story in the quintet is fully translated across **all 10 official South African regional languages**:
-- `en` (English), `zu` (isiZulu), `xh` (isiXhosa), `af` (Afrikaans), `st` (Sesotho), `nso` (Sepedi), `tn` (Setswana), `ts` (Xitsonga), `ss` (Siswati), `ve` (Tshivenḓa).
+In accordance with [`docs/STORY_TRANSLATION_BLUEPRINT.md`](file:///c:/Users/Faiz/Documents/workspaces/mzansi-midnight/docs/STORY_TRANSLATION_BLUEPRINT.md), every story in the quintet is fully translated across **all 11 official South African languages**:
+- `en` (English), `zu` (isiZulu), `xh` (isiXhosa), `af` (Afrikaans), `st` (Sesotho), `nso` (Sepedi), `tn` (Setswana), `ts` (Xitsonga), `ss` (siSwati), `ve` (Tshivenḓa), `nr` (isiNdebele).
 
 ### Regional Linguistic Flavors by Story
-Each story emphasizes authentic local linguistic nuances, slang, and idioms while maintaining complete grammatical rigor across all 10 translations:
+Each story emphasizes authentic local linguistic nuances, slang, and idioms while maintaining complete grammatical rigor across all 11 translations:
 - **Story 1 (eThekwini-Gold)**: Coastal isiZulu, Durban English slang (*chommie*, *ou*, *bra*), and port maritime jargon.
 - **Story 2 (Highveld-Chrome)**: Urban Tsotsitaal, Sesotho, Sepedi, Setswana, and high-stakes corporate Sandton / Pretoria political terms.
 - **Story 3 (Namaqua-Diamond)**: Arid Namaqualand Afrikaans (*die Boesmanland*, *malmokken*, *spoelklippe*), coastal dialect expressions, and diamond diver argot.

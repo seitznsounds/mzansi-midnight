@@ -322,9 +322,9 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
                   }`}
                 >
                   {/* Left: Rank & Operative Identity */}
-                  <div className="flex items-center gap-3 min-w-[200px]">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 sm:min-w-[200px]">
                     <div
-                      className={`w-8 h-8 rounded-md border flex items-center justify-center font-mono font-black text-sm shrink-0 ${rankColor}`}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md border flex items-center justify-center font-mono font-black text-xs sm:text-sm shrink-0 ${rankColor}`}
                     >
                       {index === 0 ? '👑' : index + 1}
                     </div>

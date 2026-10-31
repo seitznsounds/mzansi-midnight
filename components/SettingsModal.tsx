@@ -247,7 +247,7 @@ export const SettingsModal: React.FC<{
                 03 // Language &amp; Localisation
               </div>
               <span className="text-[10px] font-mono text-amber-400 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-600/40">
-                10 Official Languages
+                11 Official Languages
               </span>
             </div>
 

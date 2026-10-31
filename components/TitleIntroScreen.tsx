@@ -2159,7 +2159,7 @@ export const TitleIntroScreen: React.FC<{
         const story = getLocalizedStory(inspectedStory, lang);
         return (
           <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="w-full max-w-2xl rounded-2xl border border-amber-500/60 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="w-full max-w-2xl rounded-2xl border border-amber-500/60 bg-zinc-950 shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]">
               {/* MODAL HEADER */}
               <div className="relative h-44 w-full overflow-hidden bg-zinc-950 border-b border-zinc-800">
                 <img
