@@ -107,7 +107,7 @@ android/app/build/outputs/bundle/release/app-release.aab
 1. **App Identity**:
    - **App Name**: Mzansi Midnight
    - **Short Description**: A Dice-and-Node Noir RPG set in a captured South African metropolis.
-   - **Package ID**: `com.mzansimidnight.game`
+   - **Package ID**: `za.co.mzansimidnight.app`
 2. **Store Assets**:
    - **App Icon**: 512×512 px PNG (32-bit color).
    - **Feature Graphic**: 1024×500 px PNG/JPEG.

@@ -15,7 +15,7 @@ describe('Privacy Policy & POPIA Statutory Compliance', () => {
   it('identifies the responsible party and contact details under POPIA Section 1', () => {
     expect(privacyContent).toMatch(/Seitz (&amp;|&) Sounds/);
     expect(privacyContent).toContain('seitznsounds@gmail.com');
-    expect(privacyContent).toContain('com.mzansimidnight.game');
+    expect(privacyContent).toContain('za.co.mzansimidnight.app');
   });
 
   it('specifies the Protection of Personal Information Act (Act 4 of 2013) and GDPR', () => {

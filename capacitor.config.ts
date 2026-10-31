@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.mzansimidnight.game',
+  appId: 'za.co.mzansimidnight.app',
   appName: 'Mzansi Midnight',
   webDir: 'out',
   backgroundColor: '#020617',

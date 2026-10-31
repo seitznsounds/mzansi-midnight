@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <div>
               <span className="text-zinc-500">PACKAGE ID:</span>{' '}
-              <span className="text-zinc-300">com.mzansimidnight.game</span>
+              <span className="text-zinc-300">za.co.mzansimidnight.app</span>
             </div>
             <div>
               <span className="text-zinc-500">RESPONSIBLE PARTY:</span>{' '}
