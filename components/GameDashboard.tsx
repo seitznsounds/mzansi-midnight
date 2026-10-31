@@ -42,7 +42,7 @@ import ContactDialogueModal, {
 import { DEFAULT_GAME_SETTINGS, GameSettings } from '../types/settings';
 import { calculateAdrenaline } from '../engine/adrenaline';
 import { AdrenalineVignette } from './AdrenalineVignette';
-import { ActionOutcomeDispatch } from './ActionOutcomeDispatch';
+import { ActionOutcomeDispatch, RollFeedbackData } from './ActionOutcomeDispatch';
 import { CutsceneModal } from './CutsceneModal';
 import { STORY_CUTSCENES } from '../data/cutscenes';
 import { LeaderboardModal } from './LeaderboardModal';
@@ -798,13 +798,8 @@ export const GameDashboard: React.FC<{
   const [isEndCycleModalOpen, setIsEndCycleModalOpen] = useState<boolean>(false);
   const [isMissionStatusOpen, setIsMissionStatusOpen] = useState<boolean>(false);
   const [saveFlash, setSaveFlash] = useState<boolean>(false);
-  const [lastRollFeedback, setLastRollFeedback] = useState<{
-    title: string;
-    rollMath: string;
-    tier: 'clean' | 'compromised' | 'failure';
-    narrative: string;
-    summary: string;
-  } | null>(null);
+  const [lastRollFeedback, setLastRollFeedback] =
+    useState<RollFeedbackData | null>(null);
   const [lastResolvedSlotId, setLastResolvedSlotId] = useState<string | null>(null);
   const [activeCutsceneId, setActiveCutsceneId] = useState<string | null>(null);
   const [seenCutsceneIds, setSeenCutsceneIds] = useState<Set<string>>(new Set());
@@ -934,6 +929,9 @@ export const GameDashboard: React.FC<{
     if (slot.requiredItem && !state.inventory.includes(slot.requiredItem)) {
       return 'border-zinc-800 bg-zinc-950 opacity-50 cursor-not-allowed';
     }
+    if (slot.costCash && state.cash < slot.costCash) {
+      return 'border-red-800/80 bg-red-950/20';
+    }
     if (!die || die.isUsed) return 'border-zinc-800 bg-zinc-900/60';
 
     const statMod = slot.stat === 'any' ? 0 : state.stats[slot.stat];
@@ -947,12 +945,32 @@ export const GameDashboard: React.FC<{
   };
 
   const handleAssignDie = (slotId: string, dieId?: string) => {
+    const slot = activeNode?.actionSlots.find((s) => s.id === slotId);
+    if (!slot || slot.isCompleted) return;
+
+    const locSlot = getLocalizedSlot(slot, currentLang);
     const activeDieId = dieId || selectedDieId;
-    if (!activeDieId) return;
+
+    if (!activeDieId) {
+      soundscape.playOutcome('failure');
+      triggerHaptic('warning');
+      setLastResolvedSlotId(slotId);
+      setLastRollFeedback({
+        title: locSlot.title,
+        rollMath: t('ui.no_die_selected', 'NO DIE SELECTED', currentLang),
+        tier: 'blocked',
+        narrative: t(
+          'ui.no_die_selected_desc',
+          'Select an available die from the bottom dock (Dice #1–5) before assigning it to this action slot.',
+          currentLang
+        ),
+        summary: t('ui.assign_die_prompt', 'SELECT A DIE BELOW', currentLang),
+      });
+      return;
+    }
 
     const die = state.dicePool.find((d) => d.id === activeDieId);
-    const slot = activeNode?.actionSlots.find((s) => s.id === slotId);
-    if (!die || !slot || die.isUsed || slot.isCompleted) return;
+    if (!die || die.isUsed) return;
 
     const nextState = resolveActionSlot(
       state,
@@ -963,6 +981,7 @@ export const GameDashboard: React.FC<{
 
     // Check if the die was actually consumed (not blocked by roadblock/cash/Stage 6)
     const wasConsumed = nextState.dicePool.find((d) => d.id === activeDieId)?.isUsed;
+
     if (wasConsumed) {
       const statMod = slot.stat === 'any' ? 0 : state.stats[slot.stat];
       const blackoutMod =
@@ -979,19 +998,82 @@ export const GameDashboard: React.FC<{
       );
       setLastResolvedSlotId(slotId);
       setLastRollFeedback({
-        title: getLocalizedSlot(slot, currentLang).title,
+        title: locSlot.title,
         rollMath: `Die ${die.value} ${totalMod >= 0 ? `+ ${totalMod}` : `- ${Math.abs(totalMod)}`} = ${finalRoll}`,
         tier,
         narrative: chosenOutcome.narrativeLog,
         summary: formatOutcomeSummary(chosenOutcome),
       });
+      setSelectedDieId(null);
     } else {
       soundscape.playOutcome('failure');
       triggerHaptic('warning');
+      setLastResolvedSlotId(slotId);
+
+      // Extract precise blocking reason with tactical advice
+      let blockedMath = t('ui.action_blocked', 'ACTION BLOCKED', currentLang);
+      let blockedNarrative =
+        nextState.activeLog[0] ||
+        t('ui.action_cannot_execute', 'Cannot execute this action.', currentLang);
+      let blockedSummary = t('ui.blocked', 'BLOCKED', currentLang);
+
+      if (slot.costCash && state.cash < slot.costCash) {
+        const shortfall = slot.costCash - state.cash;
+        blockedMath = `${t('ui.insufficient_funds', 'INSUFFICIENT FUNDS', currentLang)} [R${state.cash.toLocaleString()} / R${slot.costCash.toLocaleString()}]`;
+        blockedNarrative = t(
+          'ui.blocked_funds_desc',
+          'Insufficient funds: Requires R{cost} to bribe or finance this action, but your operative war-chest only has R{have}. You are short R{shortfall}. Liquidate evidence at the pawn shop or collect syndicate retainers.',
+          currentLang
+        )
+          .replace('{cost}', slot.costCash.toLocaleString())
+          .replace('{have}', state.cash.toLocaleString())
+          .replace('{shortfall}', shortfall.toLocaleString());
+        blockedSummary = `${t('ui.short', 'SHORT', currentLang)} R${shortfall.toLocaleString()}`;
+      } else if (
+        state.currentNodeId !== selectedNodeId &&
+        isCorridorRoadblocked(state, state.currentNodeId, selectedNodeId) &&
+        !hasFreeRoadblockBypass(state)
+      ) {
+        blockedMath = t('ui.saps_roadblock', 'SAPS ROADBLOCK ACTIVE', currentLang);
+        blockedNarrative = t(
+          'ui.blocked_roadblock_desc',
+          'Corridor to {node} is quarantined by SAPS Highway Patrol. Bribe the cordon (R200) or sacrifice 1 Die for a back-alley detour before executing actions here.',
+          currentLang
+        ).replace('{node}', activeNode?.title ?? '');
+        blockedSummary = t('ui.roadblock_quarantine', 'CORDON ACTIVE', currentLang);
+      } else if (
+        state.loadSheddingStage === 6 &&
+        slot.disabledDuringStage6 &&
+        !state.generatorActiveToday
+      ) {
+        blockedMath = t('ui.stage6_blackout', 'STAGE 6 BLACKOUT', currentLang);
+        blockedNarrative = t(
+          'ui.blocked_stage6_desc',
+          'Terminal offline: Stage 6 Load Shedding has cut power to this sector. Purchase Generator Diesel (R300) in the top bar to restore power.',
+          currentLang
+        );
+        blockedSummary = t('ui.diesel_required', 'DIESEL REQUIRED', currentLang);
+      } else if (slot.requiredItem && !state.inventory.includes(slot.requiredItem)) {
+        const itemName = getLocalizedItemName(slot.requiredItem, currentLang);
+        blockedMath = t('ui.missing_required_item', 'MISSING ITEM', currentLang);
+        blockedNarrative = t(
+          'ui.blocked_item_desc',
+          'This action requires specialized gear or evidence: {item}. Secure it from contacts or district nodes first.',
+          currentLang
+        ).replace('{item}', itemName);
+        blockedSummary = itemName;
+      }
+
+      setLastRollFeedback({
+        title: locSlot.title,
+        rollMath: blockedMath,
+        tier: 'blocked',
+        narrative: blockedNarrative,
+        summary: blockedSummary,
+      });
     }
 
     setState(nextState);
-    setSelectedDieId(null);
   };
 
   const executeEndCycle = () => {
@@ -1523,6 +1605,33 @@ export const GameDashboard: React.FC<{
         </button>
       </nav>
 
+      {/* MOBILE LIVE TACTICAL SCANNER / DISPATCH TICKER (<1024px) */}
+      <div className="lg:hidden px-3 py-1.5 bg-black/90 border-b border-zinc-800/80 flex items-center justify-between gap-2 font-mono text-[11px] text-zinc-300 overflow-hidden shrink-0">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="text-[9px] uppercase tracking-wider text-amber-400/90 font-bold shrink-0">
+            DISPATCH:
+          </span>
+          <span className="truncate text-zinc-300 text-[10px]">
+            {state.activeLog[0]
+              ? getLocalizedLogEntry(state.activeLog[0], currentLang)
+              : t('ui.scanning_metro', 'Scanning police frequencies...', currentLang)}
+          </span>
+        </div>
+        {mobileTab !== 'map' && (
+          <button
+            type="button"
+            onClick={() => {
+              soundscape.playDieSelect();
+              setMobileTab('map');
+            }}
+            className="text-[9px] uppercase tracking-wider text-cyan-400 hover:text-cyan-300 shrink-0 underline underline-offset-1 cursor-pointer font-bold"
+          >
+            Log →
+          </button>
+        )}
+      </div>
+
       {/* 2. MAIN WORKSPACE (3 COLUMNS ON DESKTOP, TABBED ON MOBILE) */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* LEFT COLUMN: THREAT CLOCKS, FACTION STANDING, PERKS & INVENTORY */}
@@ -1918,6 +2027,9 @@ export const GameDashboard: React.FC<{
                     state.loadSheddingStage === 6 &&
                     slot.disabledDuringStage6 &&
                     !state.generatorActiveToday;
+                  const cannotAffordCash = Boolean(
+                    slot.costCash && state.cash < slot.costCash
+                  );
 
                   return (
                     <div
@@ -1951,8 +2063,19 @@ export const GameDashboard: React.FC<{
                             </span>
                           )}
                           {slot.costCash && (
-                            <span className="text-xs font-mono text-emerald-400">
-                              {t('ui.cost', 'Cost', currentLang)}: R{slot.costCash}
+                            <span
+                              className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded border ${
+                                cannotAffordCash
+                                  ? 'bg-red-950/80 text-red-400 border-red-700/80'
+                                  : 'text-emerald-400 bg-emerald-950/40 border-emerald-700/40'
+                              }`}
+                            >
+                              {t('ui.cost', 'Cost', currentLang)}: R{slot.costCash.toLocaleString()}
+                              {cannotAffordCash && (
+                                <span className="ml-1 text-[10px] text-red-300 font-normal">
+                                  ({t('ui.short', 'Short', currentLang)} R{(slot.costCash - state.cash).toLocaleString()})
+                                </span>
+                              )}
                             </span>
                           )}
                         </div>
@@ -1973,15 +2096,19 @@ export const GameDashboard: React.FC<{
                               ? 'bg-emerald-950/70 border-emerald-500/80 text-emerald-300'
                               : lastRollFeedback.tier === 'compromised'
                               ? 'bg-amber-950/70 border-amber-500/80 text-amber-300'
+                              : lastRollFeedback.tier === 'blocked'
+                              ? 'bg-amber-950/90 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
                               : 'bg-red-950/70 border-red-500/80 text-red-300'
                           }`}
                         >
                           <span className="font-bold">
-                            ✓ {lastRollFeedback.tier === 'clean'
-                              ? t('ui.clean_success', 'CLEAN SUCCESS', currentLang)
+                            {lastRollFeedback.tier === 'clean'
+                              ? `✓ ${t('ui.clean_success', 'CLEAN SUCCESS', currentLang)}`
                               : lastRollFeedback.tier === 'compromised'
-                              ? t('ui.compromised', 'COMPROMISED', currentLang)
-                              : t('ui.blowback', 'BLOWBACK / FAILURE', currentLang)}
+                              ? `⚡ ${t('ui.compromised', 'COMPROMISED', currentLang)}`
+                              : lastRollFeedback.tier === 'blocked'
+                              ? `⚠️ ${t('ui.action_blocked', 'ACTION BLOCKED', currentLang)}`
+                              : `✕ ${t('ui.blowback', 'BLOWBACK / FAILURE', currentLang)}`}
                           </span>
                           <span className="text-zinc-400 font-normal">
                             [{lastRollFeedback.rollMath}]
@@ -2099,6 +2226,31 @@ export const GameDashboard: React.FC<{
                           <span className="text-xs font-mono text-red-400">
                             {t('ui.requires', 'Requires', currentLang)}: {getLocalizedItemName(slot.requiredItem!, currentLang)}
                           </span>
+                        ) : cannotAffordCash ? (
+                          <div className="space-y-1.5 p-2.5 rounded-xl bg-red-950/40 border border-red-600/70 font-mono text-xs">
+                            <div className="flex items-center justify-between text-red-300 font-bold">
+                              <span>⚠️ {t('ui.insufficient_funds', 'INSUFFICIENT FUNDS', currentLang)}</span>
+                              <span className="text-[11px] text-red-400">
+                                {t('ui.short', 'Short', currentLang)} R{(slot.costCash! - state.cash).toLocaleString()}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-zinc-400 leading-relaxed font-sans">
+                              {t('ui.need_cash_for_action', 'Requires R{cost} to bribe or finance this action. War-chest: R{have}.', currentLang)
+                                .replace('{cost}', slot.costCash!.toLocaleString())
+                                .replace('{have}', state.cash.toLocaleString())}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAssignDie(slot.id);
+                              }}
+                              className="w-full py-2 px-3 rounded-lg bg-red-900/50 hover:bg-red-900/70 border border-red-500/80 text-red-200 font-bold uppercase tracking-wider flex items-center justify-between cursor-pointer transition-colors"
+                            >
+                              <span>⚠️ {t('ui.attempt_action', 'Attempt Action', currentLang)}</span>
+                              <span className="text-[10px] text-red-300 underline">[R{slot.costCash} Required]</span>
+                            </button>
+                          </div>
                         ) : selectedDie ? (
                           <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs font-mono">

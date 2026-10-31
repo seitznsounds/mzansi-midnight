@@ -8,7 +8,7 @@ import { t } from '../engine/i18n';
 export interface RollFeedbackData {
   title: string;
   rollMath: string;
-  tier: 'clean' | 'compromised' | 'failure';
+  tier: 'clean' | 'compromised' | 'failure' | 'blocked';
   narrative: string;
   summary: string;
 }
@@ -60,6 +60,7 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
   const isClean = feedback.tier === 'clean';
   const isCompromised = feedback.tier === 'compromised';
   const isFailure = feedback.tier === 'failure';
+  const isBlocked = feedback.tier === 'blocked';
 
   const tierColors = {
     clean: {
@@ -86,20 +87,30 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
       progress: 'bg-red-600',
       glow: 'shadow-[0_0_30px_rgba(220,38,38,0.3)]',
     },
+    blocked: {
+      border: 'border-amber-500/90',
+      bg: 'bg-zinc-950/95',
+      badge: 'bg-amber-500/25 text-amber-300 border-amber-500/60',
+      accent: 'text-amber-400',
+      progress: 'bg-amber-500',
+      glow: 'shadow-[0_0_35px_rgba(245,158,11,0.35)]',
+    },
   }[feedback.tier];
 
   return (
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className={`fixed bottom-24 sm:bottom-20 right-3 sm:right-6 left-3 sm:left-auto z-40 w-auto sm:w-full sm:max-w-lg rounded-2xl border-2 backdrop-blur-xl shadow-2xl p-4 sm:p-5 select-none transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in ${tierColors.border} ${tierColors.bg} ${tierColors.glow}`}
+      className={`fixed bottom-24 sm:bottom-20 right-3 sm:right-6 left-3 sm:left-auto z-50 w-auto sm:w-full sm:max-w-lg rounded-2xl border-2 backdrop-blur-xl shadow-2xl p-4 sm:p-5 select-none transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in ${tierColors.border} ${tierColors.bg} ${tierColors.glow}`}
     >
       {/* ADRENALINE SCANNER HEADER */}
       <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2.5 mb-2.5 text-[10px] font-mono uppercase tracking-wider">
         <div className="flex items-center gap-2">
           <span
             className={`w-2 h-2 rounded-full ${
-              adrenaline.level >= 4
+              isBlocked
+                ? 'bg-amber-400 animate-ping'
+                : adrenaline.level >= 4
                 ? 'bg-red-500 animate-ping'
                 : adrenaline.level >= 3
                 ? 'bg-amber-500 animate-pulse'
@@ -107,17 +118,19 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
             }`}
           />
           <span className="text-zinc-300 font-bold truncate max-w-[240px] sm:max-w-xs">
-            {adrenaline.scannerStatusText}
+            {isBlocked
+              ? t('ui.tactical_warning', 'TACTICAL PRECONDITION WARNING', lang)
+              : adrenaline.scannerStatusText}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-zinc-500 font-bold hidden sm:inline">
-            TENSION {adrenaline.score}%
+            {isBlocked ? 'STATUS: BLOCKED' : `TENSION ${adrenaline.score}%`}
           </span>
           <button
             onClick={onDismiss}
-            className="text-zinc-400 hover:text-white px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 cursor-pointer text-xs"
+            className="text-zinc-400 hover:text-white px-2 py-1 rounded bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 cursor-pointer text-xs font-mono"
             title="Dismiss notification [ESC]"
           >
             ✕
@@ -135,6 +148,8 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
               ? t('ui.clean_success', 'CLEAN SUCCESS', lang)
               : isCompromised
               ? t('ui.compromised', 'COMPROMISED', lang)
+              : isBlocked
+              ? t('ui.action_blocked', 'ACTION BLOCKED', lang)
               : t('ui.blowback', 'BLOWBACK / FAILURE', lang)}
           </span>
           <span className="text-xs font-mono text-zinc-400">
@@ -156,7 +171,9 @@ export const ActionOutcomeDispatch: React.FC<ActionOutcomeDispatchProps> = ({
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-zinc-800/60 font-mono text-xs">
         <div className="flex items-center gap-1.5 text-amber-300">
           <span className="text-[10px] uppercase text-zinc-500">
-            {t('ui.outcome_result', 'PAYOUT // CONSEQUENCE', lang)}:
+            {isBlocked
+              ? t('ui.action_requirement', 'REQUIRED TO UNBLOCK', lang)
+              : t('ui.outcome_result', 'PAYOUT // CONSEQUENCE', lang)}:
           </span>
           <span className="font-semibold">{feedback.summary}</span>
         </div>
