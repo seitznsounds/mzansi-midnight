@@ -1249,105 +1249,126 @@ export const GameDashboard: React.FC<{
       }`}
     >
       {/* 1. RESPONSIVE TOP HUD BAR */}
-      <header className="border-b border-zinc-800 bg-zinc-950 px-3 sm:px-6 py-2 lg:py-0 lg:h-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 shrink-0">
-        {/* ROW 1 ON MOBILE / LEFT SIDE ON DESKTOP */}
-        <div className="flex items-center justify-between lg:justify-start gap-2 sm:gap-4 flex-wrap">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                soundscape.playDieSelect();
-                setIsMissionStatusOpen(true);
-              }}
-              className="text-xs sm:text-sm font-mono uppercase tracking-widest text-amber-400 font-semibold hover:text-amber-300 hover:underline cursor-pointer flex items-center gap-1.5 transition-colors"
-              title={t('ui.mission_status_tooltip', 'Click to view Mission Status, Active Clocks & Field Manual', currentLang)}
-            >
-              <span>{state.act === 2 ? t('ui.act2_prefix', 'ACT 2 // ', currentLang) : ''}{t('ui.cycle', 'CYCLE', currentLang)} {state.day}</span>
-              <span className="hidden sm:inline text-zinc-500">
-                //{' '}
-                {state.storyId === 'story_4_cape'
-                  ? 'CAPE-NOCTURNE'
-                  : state.storyId === 'story_3_namaqua'
-                  ? 'NAMAQUA-DIAMOND'
-                  : state.storyId === 'story_2_highveld'
-                  ? 'HIGHVELD-COAL'
-                  : t('ui.city_subheading', 'ETHEKWINI-GOLD', currentLang)}
-              </span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">
-                {t('ui.status', 'STATUS', currentLang)}
-              </span>
-            </button>
+      <header className="border-b border-zinc-800 bg-zinc-950 px-2.5 sm:px-4 lg:px-6 py-2 lg:py-0 lg:h-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-1.5 lg:gap-4 shrink-0 overflow-hidden">
+        {/* ROW 1 ON MOBILE / LEFT CLUSTER ON DESKTOP */}
+        <div className="flex items-center justify-between lg:justify-start gap-2 sm:gap-3 w-full lg:w-auto">
+          {/* Mission Status / Cycle Button */}
+          <button
+            type="button"
+            onClick={() => {
+              soundscape.playDieSelect();
+              setIsMissionStatusOpen(true);
+            }}
+            className="text-xs sm:text-sm font-mono uppercase tracking-wider text-amber-400 font-semibold hover:text-amber-300 hover:underline cursor-pointer flex items-center gap-1.5 transition-colors shrink-0"
+            title={t('ui.mission_status_tooltip', 'Click to view Mission Status, Active Clocks & Field Manual', currentLang)}
+          >
+            <span>{state.act === 2 ? t('ui.act2_prefix', 'ACT 2 // ', currentLang) : ''}{t('ui.cycle', 'CYCLE', currentLang)} {state.day}</span>
+            <span className="hidden md:inline text-zinc-500">
+              //{' '}
+              {state.storyId === 'story_4_cape'
+                ? 'CAPE-NOCTURNE'
+                : state.storyId === 'story_3_namaqua'
+                ? 'NAMAQUA-DIAMOND'
+                : state.storyId === 'story_2_highveld'
+                ? 'HIGHVELD-COAL'
+                : t('ui.city_subheading', 'ETHEKWINI-GOLD', currentLang)}
+            </span>
+            <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">
+              {t('ui.status', 'STATUS', currentLang)}
+            </span>
+          </button>
 
-            {/* REAL-TIME ASCENDING ADRENALINE & TENSION METER */}
-            <div
-              className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-mono border flex items-center gap-1.5 ${
+          {/* Real-time Ascending Adrenaline & Tension Meter */}
+          <div
+            className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-mono border flex items-center gap-1 sm:gap-1.5 shrink-0 ${
+              adrenaline.level >= 4
+                ? 'bg-red-950/80 border-red-500 text-red-300 animate-pulse'
+                : adrenaline.level >= 3
+                ? 'bg-orange-950/60 border-orange-500 text-orange-300'
+                : adrenaline.level >= 2
+                ? 'bg-amber-950/40 border-amber-500 text-amber-300'
+                : 'bg-emerald-950/30 border-emerald-700/60 text-emerald-400'
+            }`}
+            title={`Story Tension & Adrenaline: ${adrenaline.score}% (${adrenaline.levelName})`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
                 adrenaline.level >= 4
-                  ? 'bg-red-950/80 border-red-500 text-red-300 animate-pulse'
+                  ? 'bg-red-400 animate-ping'
                   : adrenaline.level >= 3
-                  ? 'bg-orange-950/60 border-orange-500 text-orange-300'
+                  ? 'bg-orange-400'
                   : adrenaline.level >= 2
-                  ? 'bg-amber-950/40 border-amber-500 text-amber-300'
-                  : 'bg-emerald-950/30 border-emerald-700/60 text-emerald-400'
+                  ? 'bg-amber-400'
+                  : 'bg-emerald-400'
               }`}
-              title={`Story Tension & Adrenaline: ${adrenaline.score}% (${adrenaline.levelName})`}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  adrenaline.level >= 4
-                    ? 'bg-red-400 animate-ping'
-                    : adrenaline.level >= 3
-                    ? 'bg-orange-400'
-                    : adrenaline.level >= 2
-                    ? 'bg-amber-400'
-                    : 'bg-emerald-400'
-                }`}
-              />
-              <span className="font-bold">{adrenaline.levelName}</span>
-              <span className="hidden sm:inline opacity-75">{adrenaline.score}%</span>
-            </div>
-
-            <div
-              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-mono border ${
-                state.loadSheddingStage === 6
-                  ? `bg-red-950/60 border-red-600 text-red-300 ${
-                      settings?.reduceScreenFlicker ? '' : 'animate-pulse'
-                    }`
-                  : 'bg-amber-950/40 border-amber-700 text-amber-300'
-              }`}
-            >
-              {t('ui.stage', 'STAGE', currentLang)} {state.loadSheddingStage}{' '}
-              <span className="hidden sm:inline">{t('ui.load_shedding', 'LOAD SHEDDING', currentLang)}</span>
-            </div>
-            {state.loadSheddingStage === 6 && !state.generatorActiveToday && (
-              <button
-                onClick={() => {
-                  soundscape.playDieSelect();
-                  setState((prev) => activateGeneratorDiesel(prev));
-                }}
-                disabled={state.cash < 300}
-                className={`px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] font-mono border transition-colors ${
-                  state.cash >= 300
-                    ? 'bg-cyan-950/60 border-cyan-600 text-cyan-300 hover:bg-cyan-900/60 cursor-pointer'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-600 cursor-not-allowed'
-                }`}
-              >
-                {t('ui.add_diesel', '+ Diesel (R300)', currentLang)}
-              </button>
-            )}
-            {state.generatorActiveToday && (
-              <span className="px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] font-mono bg-cyan-950/50 border border-cyan-700 text-cyan-300">
-                {t('ui.diesel_on', 'DIESEL ON', currentLang)}
-              </span>
-            )}
+            />
+            <span className="font-bold">{adrenaline.levelName}</span>
+            <span className="hidden sm:inline opacity-75">{adrenaline.score}%</span>
           </div>
 
-          {/* CASH & COMPOSURE (SHOWN ON ROW 1 FOR MOBILE) */}
-          <div className="flex lg:hidden items-center gap-3 text-xs font-mono">
-            <span className="text-emerald-400 font-semibold">
+          {/* Load Shedding Stage Badge */}
+          <div
+            className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-mono border shrink-0 ${
+              state.loadSheddingStage === 6
+                ? `bg-red-950/60 border-red-600 text-red-300 ${
+                    settings?.reduceScreenFlicker ? '' : 'animate-pulse'
+                  }`
+                : 'bg-amber-950/40 border-amber-700 text-amber-300'
+            }`}
+          >
+            <span>{t('ui.stage', 'STAGE', currentLang)} {state.loadSheddingStage}</span>{' '}
+            <span className="hidden sm:inline">{t('ui.load_shedding', 'LOAD SHEDDING', currentLang)}</span>
+          </div>
+
+          {state.loadSheddingStage === 6 && !state.generatorActiveToday && (
+            <button
+              onClick={() => {
+                soundscape.playDieSelect();
+                setState((prev) => activateGeneratorDiesel(prev));
+              }}
+              disabled={state.cash < 300}
+              className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] font-mono border transition-colors shrink-0 ${
+                state.cash >= 300
+                  ? 'bg-cyan-950/60 border-cyan-600 text-cyan-300 hover:bg-cyan-900/60 cursor-pointer'
+                  : 'bg-zinc-900 border-zinc-800 text-zinc-600 cursor-not-allowed'
+              }`}
+            >
+              {t('ui.add_diesel', '+ Diesel (R300)', currentLang)}
+            </button>
+          )}
+          {state.generatorActiveToday && (
+            <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] font-mono bg-cyan-950/50 border border-cyan-700 text-cyan-300 shrink-0">
+              {t('ui.diesel_on', 'DIESEL ON', currentLang)}
+            </span>
+          )}
+
+          {/* CASH & COMPOSURE (SHOWN ON ROW 1 ON MOBILE) */}
+          <div className="flex lg:hidden items-center gap-2 sm:gap-3 text-xs font-mono shrink-0 ml-auto">
+            <span className="text-emerald-400 font-semibold text-xs sm:text-sm">
               R{state.cash.toLocaleString()}
             </span>
             <div className="flex items-center gap-1.5">
-              <div className="w-14 h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div className="w-10 xs:w-14 sm:w-16 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-cyan-400 transition-all"
+                  style={{ width: `${state.composure}%` }}
+                />
+              </div>
+              <span className="text-cyan-300 text-[10px] sm:text-xs">{state.composure}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2 ON MOBILE / RIGHT SIDE ON DESKTOP */}
+        <div className="flex items-center justify-between lg:justify-end gap-2 sm:gap-4 w-full lg:w-auto text-xs font-mono">
+          {/* CASH & COMPOSURE (DESKTOP >=1024px) */}
+          <div className="hidden lg:flex items-center gap-4 text-xs font-mono shrink-0">
+            <div className="text-emerald-400 font-semibold">
+              {t('ui.cash', 'CASH', currentLang)}: R{state.cash.toLocaleString()}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-zinc-400">{t('ui.composure', 'COMPOSURE', currentLang)}:</span>
+              <div className="w-20 xl:w-24 h-2.5 bg-zinc-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-cyan-400 transition-all"
                   style={{ width: `${state.composure}%` }}
@@ -1356,73 +1377,66 @@ export const GameDashboard: React.FC<{
               <span className="text-cyan-300">{state.composure}%</span>
             </div>
           </div>
-        </div>
 
-        {/* ROW 2 ON MOBILE / RIGHT SIDE ON DESKTOP */}
-        <div className="flex items-center justify-between lg:justify-end gap-3 sm:gap-5 text-xs sm:text-sm font-mono">
-          {/* CASH & COMPOSURE (DESKTOP) */}
-          <div className="hidden lg:flex items-center gap-5">
-            <div className="text-emerald-400">
-              {t('ui.cash', 'CASH', currentLang)}: R{state.cash.toLocaleString()}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-zinc-400">{t('ui.composure', 'COMPOSURE', currentLang)}:</span>
-              <div className="w-24 h-2.5 bg-zinc-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-cyan-400 transition-all"
-                  style={{ width: `${state.composure}%` }}
-                />
-              </div>
-              <span>{state.composure}%</span>
-            </div>
-          </div>
-
-          {/* SPEEDRUN STOPWATCH & 4 INVESTIGATOR STATS */}
-          <div className="flex items-center gap-2.5 sm:gap-3 lg:border-l lg:border-zinc-800 lg:pl-4 text-[11px] sm:text-xs text-zinc-300">
+          {/* SPEEDRUN STOPWATCH & UNIFIED 4 INVESTIGATOR STATS PILL */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 lg:border-l lg:border-zinc-800 lg:pl-3 text-[10px] sm:text-xs text-zinc-300 shrink-0">
+            {/* Speedrun Elapsed Stopwatch */}
             <div
-              className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/60 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-[10px] sm:text-[11px]"
+              className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded bg-black/60 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-[10px] sm:text-[11px] shrink-0"
               title="Speedrun Elapsed Time"
             >
               <span>⏱️</span>
               <span>{formatSpeedrunTime(elapsedSeconds)}</span>
             </div>
 
-            <span>
-              {t('stat_abbr.street', 'STRT', currentLang)}:{' '}
-              {state.stats.street >= 0
-                ? `+${state.stats.street}`
-                : state.stats.street}
-            </span>
-            <span>
-              {t('stat_abbr.dockets', 'DCKT', currentLang)}:{' '}
-              {state.stats.dockets >= 0
-                ? `+${state.stats.dockets}`
-                : state.stats.dockets}
-            </span>
-            <span>
-              {t('stat_abbr.wire', 'WIRE', currentLang)}:{' '}
-              {state.stats.wire >= 0 ? `+${state.stats.wire}` : state.stats.wire}
-            </span>
-            <span>
-              {t('stat_abbr.influence', 'INFL', currentLang)}:{' '}
-              {state.stats.influence >= 0
-                ? `+${state.stats.influence}`
-                : state.stats.influence}
-            </span>
+            {/* Combined 4-Attribute Tactical Chip */}
+            <div
+              className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2 py-0.5 rounded bg-zinc-900/90 border border-zinc-800 text-[10px] sm:text-[11px] font-mono text-zinc-300 shrink-0"
+              title="Operative Attributes: Street, Dockets, Wire, Influence"
+            >
+              <span title="Street">
+                <strong className="text-zinc-400">{t('stat_abbr.street', 'STRT', currentLang)}:</strong>{' '}
+                <span className={state.stats.street > 0 ? 'text-amber-300 font-semibold' : ''}>
+                  {state.stats.street >= 0 ? `+${state.stats.street}` : state.stats.street}
+                </span>
+              </span>
+              <span className="text-zinc-700">|</span>
+              <span title="Dockets">
+                <strong className="text-zinc-400">{t('stat_abbr.dockets', 'DCKT', currentLang)}:</strong>{' '}
+                <span className={state.stats.dockets > 0 ? 'text-amber-300 font-semibold' : ''}>
+                  {state.stats.dockets >= 0 ? `+${state.stats.dockets}` : state.stats.dockets}
+                </span>
+              </span>
+              <span className="text-zinc-700">|</span>
+              <span title="Wire">
+                <strong className="text-zinc-400">{t('stat_abbr.wire', 'WIRE', currentLang)}:</strong>{' '}
+                <span className={state.stats.wire > 0 ? 'text-amber-300 font-semibold' : ''}>
+                  {state.stats.wire >= 0 ? `+${state.stats.wire}` : state.stats.wire}
+                </span>
+              </span>
+              <span className="text-zinc-700">|</span>
+              <span title="Influence">
+                <strong className="text-zinc-400">{t('stat_abbr.influence', 'INFL', currentLang)}:</strong>{' '}
+                <span className={state.stats.influence > 0 ? 'text-amber-300 font-semibold' : ''}>
+                  {state.stats.influence >= 0 ? `+${state.stats.influence}` : state.stats.influence}
+                </span>
+              </span>
+            </div>
           </div>
 
           {/* MOBILE QUICK ACTION CONTROLS (<1024px) */}
-          <div className="flex lg:hidden items-center gap-1.5 shrink-0">
+          <div className="flex lg:hidden items-center gap-1 sm:gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsBoardOpen(true);
               }}
-              className="px-2 py-1 rounded bg-red-500/15 border border-red-500/50 hover:border-red-400 text-[11px] text-red-300 cursor-pointer flex items-center gap-1 font-mono transition-colors"
+              className="px-2 py-1 rounded bg-red-500/15 border border-red-500/50 hover:border-red-400 text-[10px] sm:text-[11px] text-red-300 cursor-pointer flex items-center gap-1 font-mono transition-colors"
               title="Open Conspiracy Board"
             >
-              ◈ <span className="hidden xs:inline">{t('ui.board', 'BOARD', currentLang)}</span>
+              <span>◈</span>
+              <span className="hidden xs:inline">{t('ui.board', 'BOARD', currentLang)}</span>
             </button>
             {onManualSave && (
               <button
@@ -1433,14 +1447,28 @@ export const GameDashboard: React.FC<{
                   setSaveFlash(true);
                   setTimeout(() => setSaveFlash(false), 1500);
                 }}
-                className={`px-2 py-1 rounded border text-[11px] font-mono cursor-pointer transition-colors ${
+                className={`px-2 py-1 rounded border text-[10px] sm:text-[11px] font-mono cursor-pointer transition-colors ${
                   saveFlash
                     ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
                     : 'bg-zinc-900 border-zinc-700 hover:border-emerald-500/60 text-zinc-300'
                 }`}
                 title="Quick Save"
               >
-                {saveFlash ? '✓' : '💾'} <span className="hidden xs:inline">{saveFlash ? t('ui.saved', 'SAVED', currentLang) : t('ui.save', 'SAVE', currentLang)}</span>
+                <span>{saveFlash ? '✓' : '💾'}</span>
+                <span className="hidden xs:inline">{saveFlash ? t('ui.saved', 'SAVED', currentLang) : t('ui.save', 'SAVE', currentLang)}</span>
+              </button>
+            )}
+            {onOpenSettings && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  onOpenSettings();
+                }}
+                className="px-1.5 py-1 rounded bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-[11px] text-zinc-300 cursor-pointer transition-colors"
+                title="Settings & Audio"
+              >
+                ⚙
               </button>
             )}
             <button
@@ -1449,63 +1477,70 @@ export const GameDashboard: React.FC<{
                 soundscape.playDieSelect();
                 setIsMobileOpsOpen(true);
               }}
-              className="px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[11px] text-amber-200 font-mono font-bold cursor-pointer flex items-center gap-1 transition-colors"
-              title="Tactical Operations Menu"
+              className="px-2 sm:px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[11px] text-amber-200 font-mono font-bold cursor-pointer flex items-center gap-1 transition-colors"
+              title="Tactical Operations Menu (Vault, Settings, Scores)"
             >
-              ☰ {t('ui.ops', 'OPS', currentLang)}
+              <span>☰</span>
+              <span>{t('ui.ops', 'OPS', currentLang)}</span>
             </button>
           </div>
 
           {/* DESKTOP EXTENDED CONTROLS (>=1024px) */}
-          <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 lg:border-l lg:border-zinc-800 lg:pl-4">
+          <div className="hidden lg:flex items-center gap-1 xl:gap-1.5 lg:border-l lg:border-zinc-800 lg:pl-3 shrink-0">
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsLeaderboardOpen(true);
               }}
-              className="px-2 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[10px] sm:text-[11px] text-amber-200 cursor-pointer flex items-center gap-1 font-mono font-semibold transition-colors"
+              className="px-2 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[10px] xl:text-[11px] text-amber-200 cursor-pointer flex items-center gap-1 font-mono font-semibold transition-colors shrink-0"
               title="Open Leaderboard, Speedruns & 25-Ending Completionists"
             >
-              🏆 {t('ui.scores', 'SCORES', currentLang)}
+              <span>🏆</span>
+              <span className="hidden xl:inline">{t('ui.scores', 'SCORES', currentLang)}</span>
             </button>
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsProfileOpen(true);
               }}
-              className="px-2 py-1 rounded bg-cyan-950/40 border border-cyan-500/50 hover:border-cyan-400 text-[10px] sm:text-[11px] text-cyan-300 cursor-pointer flex items-center gap-1 font-mono transition-colors"
+              className="px-2 py-1 rounded bg-cyan-950/40 border border-cyan-500/50 hover:border-cyan-400 text-[10px] xl:text-[11px] text-cyan-300 cursor-pointer flex items-center gap-1 font-mono transition-colors shrink-0"
               title="Operative Profile, Google Login & Cloud Vault"
             >
-              👤 {userProfile.isGuest ? 'VAULT' : userProfile.displayName.substring(0, 8)}
+              <span>👤</span>
+              <span>{userProfile.isGuest ? 'VAULT' : userProfile.displayName.substring(0, 8)}</span>
             </button>
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsMissionStatusOpen(true);
               }}
-              className="px-2 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[10px] sm:text-[11px] text-amber-200 cursor-pointer flex items-center gap-1 font-mono font-semibold transition-colors"
+              className="px-2 py-1 rounded bg-amber-500/20 border border-amber-500/60 hover:border-amber-400 text-[10px] xl:text-[11px] text-amber-200 cursor-pointer flex items-center gap-1 font-mono font-semibold transition-colors shrink-0"
               title="Open Case File, Mission Objectives & Field Manual"
             >
-              📋 {t('ui.status', 'STATUS', currentLang)}
+              <span>📋</span>
+              <span className="hidden xl:inline">{t('ui.status', 'STATUS', currentLang)}</span>
             </button>
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsBoardOpen(true);
               }}
-              className="px-2 py-1 rounded bg-red-500/15 border border-red-500/50 hover:border-red-400 text-[10px] sm:text-[11px] text-red-300 cursor-pointer"
+              className="px-2 py-1 rounded bg-red-500/15 border border-red-500/50 hover:border-red-400 text-[10px] xl:text-[11px] text-red-300 cursor-pointer shrink-0"
               title="Open Red-String Conspiracy Mind-Map"
             >
-              ◈ {t('ui.board', 'BOARD', currentLang)}
+              <span>◈</span>
+              <span>{t('ui.board', 'BOARD', currentLang)}</span>
             </button>
             <button
               onClick={() => {
                 soundscape.playDieSelect();
                 setIsGuideOpen(true);
               }}
-              className="px-2 py-1 rounded bg-amber-500/15 border border-amber-500/50 hover:border-amber-400 text-[10px] sm:text-[11px] text-amber-300 cursor-pointer"
+              className="px-2 py-1 rounded bg-amber-500/15 border border-amber-500/50 hover:border-amber-400 text-[10px] xl:text-[11px] text-amber-300 cursor-pointer shrink-0"
+              title="Field Guide & Rules"
             >
-              ? {t('ui.guide', 'GUIDE', currentLang)}
+              <span>?</span>
+              <span className="hidden xl:inline">{t('ui.guide', 'GUIDE', currentLang)}</span>
             </button>
             {onManualSave && (
               <button
@@ -1515,11 +1550,12 @@ export const GameDashboard: React.FC<{
                   setSaveFlash(true);
                   setTimeout(() => setSaveFlash(false), 1500);
                 }}
-                className={`px-2 py-1 rounded border text-[10px] sm:text-[11px] cursor-pointer transition-colors ${
+                className={`px-2 py-1 rounded border text-[10px] xl:text-[11px] cursor-pointer transition-colors shrink-0 ${
                   saveFlash
                     ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
                     : 'bg-zinc-900 border-zinc-700 hover:border-emerald-500/60 text-zinc-300'
                 }`}
+                title="Manual Quick Save"
               >
                 {saveFlash ? t('ui.saved', 'SAVED ✓', currentLang) : t('ui.save', 'SAVE', currentLang)}
               </button>
@@ -1530,9 +1566,11 @@ export const GameDashboard: React.FC<{
                   soundscape.playDieSelect();
                   onOpenSettings();
                 }}
-                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-[10px] sm:text-[11px] text-zinc-300 cursor-pointer"
+                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-[10px] xl:text-[11px] text-zinc-300 cursor-pointer shrink-0"
+                title="Settings & Audio"
               >
-                ⚙ {t('ui.settings', 'SETTINGS', currentLang)}
+                <span>⚙</span>
+                <span className="hidden 2xl:inline"> {t('ui.settings', 'SETTINGS', currentLang)}</span>
               </button>
             )}
             {onReturnToMenu && (
@@ -1541,7 +1579,8 @@ export const GameDashboard: React.FC<{
                   soundscape.playDieSelect();
                   onReturnToMenu();
                 }}
-                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-800 hover:border-amber-500/60 text-[10px] sm:text-[11px] text-zinc-400 hover:text-amber-300 cursor-pointer"
+                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-800 hover:border-amber-500/60 text-[10px] xl:text-[11px] text-zinc-400 hover:text-amber-300 cursor-pointer shrink-0"
+                title="Return to Main Menu"
               >
                 {t('ui.menu', 'MENU', currentLang)}
               </button>
@@ -1771,7 +1810,7 @@ export const GameDashboard: React.FC<{
         <main
           className={`${
             mobileTab === 'map' ? 'flex w-full' : 'hidden'
-          } lg:flex flex-1 flex-col gap-2.5 sm:gap-3 p-2.5 sm:p-4 bg-slate-950 overflow-hidden`}
+          } lg:flex flex-1 flex-col gap-2.5 sm:gap-3 p-2.5 sm:p-4 bg-slate-950 overflow-y-auto lg:overflow-hidden`}
         >
           <ObjectiveTracker
             state={state}
@@ -1797,6 +1836,10 @@ export const GameDashboard: React.FC<{
             selectedNodeId={selectedNodeId}
             lang={currentLang}
             onSelectNode={handleSelectNode}
+            onInspectNode={(nodeId) => {
+              handleSelectNode(nodeId);
+              setMobileTab('actions');
+            }}
           />
 
           {/* MOBILE ONE-THUMB NODE ACTION DRAWER CTA */}

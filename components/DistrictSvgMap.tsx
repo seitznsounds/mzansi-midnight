@@ -8,6 +8,7 @@ interface DistrictSvgMapProps {
   selectedNodeId: string;
   lang?: SupportedLanguage;
   onSelectNode: (nodeId: string) => void;
+  onInspectNode?: (nodeId: string) => void;
 }
 
 const FACTION_THEME: Record<
@@ -177,8 +178,27 @@ export const DistrictSvgMap: React.FC<DistrictSvgMapProps> = ({
   selectedNodeId,
   lang = 'en',
   onSelectNode,
+  onInspectNode,
 }) => {
   const nodes = Object.values(state.nodes);
+
+  const selectedNode = state.nodes[selectedNodeId];
+  const selectedTheme = selectedNode ? FACTION_THEME[selectedNode.factionOwner] : null;
+  const selectedLoc = selectedNode ? getLocalizedNode(selectedNode.id, selectedNode.title, selectedNode.subtitle, lang) : null;
+  const selectedFactionLabel = selectedNode ? getLocalizedFactionName(selectedNode.factionOwner, lang) : null;
+  const selectedHasStage6Lockout =
+    selectedNode &&
+    state.loadSheddingStage === 6 &&
+    selectedNode.actionSlots.some((s) => s.disabledDuringStage6);
+
+  const getNodeBadgeCode = (id: string, title: string) => {
+    const match = id.match(/^([a-z]+)?(\d+)/i);
+    if (match && match[2]) {
+      const prefix = match[1] ? match[1][0].toUpperCase() : 'N';
+      return `${prefix}${match[2]}`;
+    }
+    return title.substring(0, 2).toUpperCase();
+  };
 
   const isAct2 = state.act === 2;
   const isHighveld = state.storyId === 'story_2_highveld';
@@ -269,7 +289,7 @@ export const DistrictSvgMap: React.FC<DistrictSvgMapProps> = ({
   }
 
   return (
-    <div className="relative flex-1 w-full min-h-[260px] rounded-xl border border-zinc-800/90 bg-slate-950 overflow-hidden shadow-inner flex flex-col">
+    <div className="relative flex-1 w-full min-h-[290px] xs:min-h-[320px] sm:min-h-[360px] rounded-xl border border-zinc-800/90 bg-slate-950 overflow-hidden shadow-inner flex flex-col">
       {/* MOBILE QUICK-SELECT NODE STRIP (VISIBLE <1024px) */}
       <div className="lg:hidden relative z-30 flex items-center gap-1.5 overflow-x-auto px-2.5 py-2 bg-zinc-950/90 border-b border-zinc-800/80 shrink-0">
         <span className="text-[9px] font-mono uppercase text-zinc-500 shrink-0 mr-1">
@@ -579,21 +599,32 @@ export const DistrictSvgMap: React.FC<DistrictSvgMapProps> = ({
                 : t('map.hint.default', 'Unlock: Audit Docket or Phone', lang);
 
               return (
-                <div
-                  key={node.id}
-                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 w-28 sm:w-36 lg:w-40 p-1.5 sm:p-2 rounded-lg border border-dashed border-zinc-700/80 bg-zinc-950/80 backdrop-blur-sm text-center opacity-75 pointer-events-none shadow-lg z-10"
-                >
-                  <div className="text-[8px] sm:text-[9px] font-mono uppercase text-amber-500/80">
-                    {t('map.locked_lead', 'LOCKED LEAD', lang)}
+                <React.Fragment key={`locked-${node.id}`}>
+                  {/* MOBILE CIRCULAR LOCKED BEACON (<640px) */}
+                  <div
+                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                    className="sm:hidden absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-dashed border-zinc-700/80 bg-zinc-950/90 backdrop-blur-sm flex items-center justify-center opacity-70 pointer-events-none shadow-md z-10"
+                    title={`${t('map.locked_lead', 'LOCKED LEAD', lang)}: ${loc.title}`}
+                  >
+                    <span className="text-zinc-400 text-xs leading-none">🔒</span>
                   </div>
-                  <div className="text-[10px] sm:text-xs font-medium text-zinc-300 mt-0.5 truncate">
-                    {loc.title}
+
+                  {/* DESKTOP RECTANGULAR LOCKED CARD (>=640px) */}
+                  <div
+                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                    className="hidden sm:block absolute -translate-x-1/2 -translate-y-1/2 w-36 lg:w-40 p-1.5 sm:p-2 rounded-lg border border-dashed border-zinc-700/80 bg-zinc-950/80 backdrop-blur-sm text-center opacity-75 pointer-events-none shadow-lg z-10"
+                  >
+                    <div className="text-[8px] sm:text-[9px] font-mono uppercase text-amber-500/80">
+                      {t('map.locked_lead', 'LOCKED LEAD', lang)}
+                    </div>
+                    <div className="text-[10px] sm:text-xs font-medium text-zinc-300 mt-0.5 truncate">
+                      {loc.title}
+                    </div>
+                    <div className="text-[8px] sm:text-[9px] font-mono text-zinc-400 mt-0.5 truncate">
+                      {unlockHint}
+                    </div>
                   </div>
-                  <div className="text-[8px] sm:text-[9px] font-mono text-zinc-400 mt-0.5 truncate">
-                    {unlockHint}
-                  </div>
-                </div>
+                </React.Fragment>
               );
             }
 
@@ -606,70 +637,175 @@ export const DistrictSvgMap: React.FC<DistrictSvgMapProps> = ({
               node.actionSlots.some((s) => (s.stage6BonusModifier ?? 0) > 0);
 
             const isPlayerHere = state.currentNodeId === node.id;
+            const badgeCode = getNodeBadgeCode(node.id, loc.title);
 
             return (
-              <button
-                key={node.id}
-                onClick={() => onSelectNode(node.id)}
-                style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 w-28 sm:w-36 lg:w-44 p-2 sm:p-2.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer shadow-xl backdrop-blur-md ${
-                  isSelected
-                    ? 'bg-zinc-950/90 border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.3)] scale-105 z-20'
-                    : `bg-zinc-950/80 ${theme.border} hover:scale-105 hover:bg-zinc-900/90 z-10`
-                }`}
-              >
-                {/* Top Faction Pill & Player Location Badge */}
-                <div className="flex items-center justify-between gap-1">
+              <React.Fragment key={`node-${node.id}`}>
+                {/* 1. MOBILE CIRCULAR TACTICAL BEACON PIN (<640px) */}
+                <button
+                  type="button"
+                  onClick={() => onSelectNode(node.id)}
+                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                  className={`sm:hidden absolute -translate-x-1/2 -translate-y-1/2 w-9 h-9 xs:w-10 xs:h-10 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-150 backdrop-blur-md shadow-lg ${
+                    isSelected
+                      ? 'bg-zinc-950 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.5)] scale-110 z-20 ring-2 ring-amber-400/40'
+                      : `bg-zinc-950/90 ${theme.border} hover:scale-105 z-10`
+                  }`}
+                  title={`${loc.title} (${loc.district})`}
+                >
                   <span
-                    className={`px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono uppercase tracking-wider truncate ${theme.badge}`}
+                    className={`font-mono font-bold text-[11px] xs:text-xs ${
+                      isSelected ? 'text-amber-300 font-extrabold' : 'text-zinc-200'
+                    }`}
                   >
-                    {factionLabel}
+                    {badgeCode}
                   </span>
-                  {isPlayerHere ? (
-                    <span className="px-1 sm:px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[8px] sm:text-[9px] font-mono font-semibold uppercase shrink-0">
-                      {t('map.here', 'HERE', lang)}
+
+                  {/* Player Location Radar Beacon */}
+                  {isPlayerHere && (
+                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-400 border border-black text-[7px] text-black font-black items-center justify-center">
+                        ★
+                      </span>
                     </span>
-                  ) : (
-                    <span
-                      className={`w-2 h-2 rounded-full shrink-0 ${theme.dot}`}
-                    />
                   )}
-                </div>
 
-                {/* Node Title & Subtitle */}
-                <div className="text-[11px] sm:text-xs lg:text-sm font-medium text-zinc-100 mt-1 sm:mt-1.5 truncate">
-                  {loc.title}
-                </div>
-                <div className="hidden sm:block text-[10px] lg:text-[11px] text-zinc-400 truncate">
-                  {loc.district}
-                </div>
-
-                {/* Footer: Action Slots & Load Shedding Badges */}
-                <div className="mt-1.5 sm:mt-2.5 pt-1.5 sm:pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[9px] sm:text-[10px] font-mono">
-                  <span className="text-zinc-300">
-                    {node.actionSlots.length} {t('map.slots', 'Slots', lang)}
-                  </span>
-
+                  {/* Stage 6 Lockout / Diesel / Stealth Indicators */}
                   {hasStage6Lockout && !state.generatorActiveToday && (
-                    <span className="text-red-400 bg-red-950/60 px-1 py-0.5 rounded">
-                      {t('map.dark', 'DARK', lang)}
+                    <span className="absolute -bottom-1 -left-1 px-1 rounded bg-red-950 border border-red-600 text-red-300 text-[8px] font-mono leading-none">
+                      ⚡
                     </span>
                   )}
                   {hasStage6Lockout && state.generatorActiveToday && (
-                    <span className="text-cyan-300 bg-cyan-950/60 px-1 py-0.5 rounded">
-                      {t('map.diesel', 'DIESEL', lang)}
+                    <span className="absolute -bottom-1 -left-1 px-1 rounded bg-cyan-950 border border-cyan-600 text-cyan-300 text-[8px] font-mono leading-none">
+                      D
                     </span>
                   )}
                   {hasStage6Bonus && (
-                    <span className="text-emerald-400 bg-emerald-950/60 px-1 py-0.5 rounded">
-                      +2 {t('map.stealth', 'STEALTH', lang)}
+                    <span className="absolute -bottom-1 -right-1 px-1 rounded bg-emerald-950 border border-emerald-600 text-emerald-300 text-[8px] font-mono leading-none">
+                      +2
                     </span>
                   )}
-                </div>
-              </button>
+                </button>
+
+                {/* 2. DESKTOP EXPANDED RECTANGULAR CARD (>=640px) */}
+                <button
+                  type="button"
+                  onClick={() => onSelectNode(node.id)}
+                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                  className={`hidden sm:block absolute -translate-x-1/2 -translate-y-1/2 w-36 lg:w-44 p-2 sm:p-2.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer shadow-xl backdrop-blur-md ${
+                    isSelected
+                      ? 'bg-zinc-950/90 border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.3)] scale-105 z-20'
+                      : `bg-zinc-950/80 ${theme.border} hover:scale-105 hover:bg-zinc-900/90 z-10`
+                  }`}
+                >
+                  {/* Top Faction Pill & Player Location Badge */}
+                  <div className="flex items-center justify-between gap-1">
+                    <span
+                      className={`px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono uppercase tracking-wider truncate ${theme.badge}`}
+                    >
+                      {factionLabel}
+                    </span>
+                    {isPlayerHere ? (
+                      <span className="px-1 sm:px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[8px] sm:text-[9px] font-mono font-semibold uppercase shrink-0">
+                        {t('map.here', 'HERE', lang)}
+                      </span>
+                    ) : (
+                      <span
+                        className={`w-2 h-2 rounded-full shrink-0 ${theme.dot}`}
+                      />
+                    )}
+                  </div>
+
+                  {/* Node Title & Subtitle */}
+                  <div className="text-[11px] sm:text-xs lg:text-sm font-medium text-zinc-100 mt-1 sm:mt-1.5 truncate">
+                    {loc.title}
+                  </div>
+                  <div className="hidden sm:block text-[10px] lg:text-[11px] text-zinc-400 truncate">
+                    {loc.district}
+                  </div>
+
+                  {/* Footer: Action Slots & Load Shedding Badges */}
+                  <div className="mt-1.5 sm:mt-2.5 pt-1.5 sm:pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[9px] sm:text-[10px] font-mono">
+                    <span className="text-zinc-300">
+                      {node.actionSlots.length} {t('map.slots', 'Slots', lang)}
+                    </span>
+
+                    {hasStage6Lockout && !state.generatorActiveToday && (
+                      <span className="text-red-400 bg-red-950/60 px-1 py-0.5 rounded">
+                        {t('map.dark', 'DARK', lang)}
+                      </span>
+                    )}
+                    {hasStage6Lockout && state.generatorActiveToday && (
+                      <span className="text-cyan-300 bg-cyan-950/60 px-1 py-0.5 rounded">
+                        {t('map.diesel', 'DIESEL', lang)}
+                      </span>
+                    )}
+                    {hasStage6Bonus && (
+                      <span className="text-emerald-400 bg-emerald-950/60 px-1 py-0.5 rounded">
+                        +2 {t('map.stealth', 'STEALTH', lang)}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
+
+        {/* MOBILE ACTIVE NODE FOCUS CARD DOCKED AT BOTTOM (<640px) */}
+        {selectedNode && selectedLoc && selectedTheme && (
+          <div className="sm:hidden absolute bottom-2 inset-x-2 p-2 rounded-xl bg-zinc-950/95 border border-amber-500/50 shadow-2xl backdrop-blur-md z-30 flex items-center justify-between gap-2">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className={`px-1.5 py-0.2 rounded text-[8px] font-mono uppercase tracking-wider ${selectedTheme.badge}`}>
+                  {selectedFactionLabel}
+                </span>
+                {state.currentNodeId === selectedNode.id && (
+                  <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 text-[8px] font-mono font-bold uppercase">
+                    {t('map.here', 'HERE', lang)}
+                  </span>
+                )}
+                {selectedHasStage6Lockout && !state.generatorActiveToday && (
+                  <span className="text-red-400 bg-red-950/70 border border-red-800 px-1 py-0.2 rounded text-[8px] font-mono">
+                    {t('map.dark', 'DARK', lang)}
+                  </span>
+                )}
+                {selectedHasStage6Lockout && state.generatorActiveToday && (
+                  <span className="text-cyan-300 bg-cyan-950/70 border border-cyan-800 px-1 py-0.2 rounded text-[8px] font-mono">
+                    {t('map.diesel', 'DIESEL', lang)}
+                  </span>
+                )}
+              </div>
+              <div className="text-xs font-semibold text-zinc-100 truncate mt-0.5">
+                {selectedLoc.title}
+              </div>
+              <div className="text-[10px] text-zinc-400 font-mono truncate">
+                {selectedLoc.district} • {selectedNode.actionSlots.length} {t('map.slots', 'Slots', lang)}
+              </div>
+            </div>
+
+            {onInspectNode ? (
+              <button
+                type="button"
+                onClick={() => onInspectNode(selectedNode.id)}
+                className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/80 text-amber-300 text-[11px] font-mono font-bold shrink-0 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>{t('ui.actions', 'ACTIONS', lang)}</span>
+                <span>&rarr;</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onSelectNode(selectedNode.id)}
+                className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/80 text-amber-300 text-[11px] font-mono font-bold shrink-0 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>{t('ui.selected', 'SELECTED', lang)}</span>
+              </button>
+            )}
+          </div>
+        )}
 
         {/* 4. MAP LEGEND OVERLAY (BOTTOM LEFT) */}
         <div className="hidden sm:flex absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-zinc-950/90 border border-zinc-800/80 items-center gap-4 text-[10px] font-mono text-zinc-400 pointer-events-none">
