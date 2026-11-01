@@ -467,6 +467,41 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
 
 ---
 
+### Phase 27d: Privacy Policy, POPIA Compliance & Store Listing Readiness ✅
+- [x] **Dedicated Privacy Policy Route (`app/privacy/page.tsx`)**:
+  - Prerendered static web route at `/privacy` (`out/privacy.html`) fulfilling statutory compliance for South Africa's **Protection of Personal Information Act, 2013 (Act 4 of 2013) ("POPIA")**, **GDPR**, and the Google Play Developer Policy.
+  - Explicit disclosures covering local device offline storage (`localStorage`), optional Google OAuth & Supabase cloud backup, public leaderboard records, Web Audio synthesis (zero microphone access), and zero third-party tracking or advertising.
+  - Complete data erasure protocol under POPIA Section 24 and GDPR Article 17, and South African Information Regulator contact details.
+- [x] **In-Game Accessibility Across All Surfaces**:
+  - Main menu footer link (`components/TitleIntroScreen.tsx`).
+  - Settings Modal section `05 // Privacy & POPIA Compliance` (`components/SettingsModal.tsx`).
+  - User Profile & Cloud Backup Modal privacy disclosure (`components/UserProfileModal.tsx`).
+  - Updated `docs/ANDROID_GOOGLE_PLAY_GUIDE.md` with package ID `za.co.mzansimidnight.app` and privacy checklist.
+- [x] **Automated Statutory Compliance Tests (`engine/__tests__/privacy.test.ts`)**:
+  - Added dedicated test suite verifying POPIA, GDPR, Responsible Party, and UI linkage requirements (8 tests passing).
+
+---
+
+### Phase 27e: Mobile Tactical Dispatch Ticker, Blocked Action Notifications & Insufficient Funds UX ✅
+- [x] **Unified Blocked Roll & Action Feedback (`components/ActionOutcomeDispatch.tsx`)**:
+  - Added `'blocked'` tier alongside `'clean'`, `'compromised'`, and `'failure'`.
+  - Elevated HUD card to `z-50` with high-visibility amber warning glow, countdown auto-dismiss bar, and actionable `REQUIRED TO UNBLOCK` guidance.
+- [x] **Proactive Insufficient Funds UI in Node Action Drawer (`components/GameDashboard.tsx`)**:
+  - Added `cannotAffordCash` detection across slot cards.
+  - Replaced misleading active buttons with proactive warning cards: `⚠️ INSUFFICIENT FUNDS (Short R{shortfall})`.
+  - Highlighted slot cost in warning red with shortfall indicators.
+- [x] **In-Slot Pulse Badges & Clear Precondition Guidance**:
+  - On blocked rolls, the clicked slot card pulses with `⚠️ ACTION BLOCKED: [INSUFFICIENT FUNDS [R150 / R400]]` directly beneath the title.
+  - Detailed narrative explanations for SAPS Roadblock quarantines, Stage 6 Blackout lockouts, and missing evidence/gear.
+  - Helpful hint provided when tapping slots without selecting a die first (`NO DIE SELECTED`).
+- [x] **Mobile Live Tactical Scanner / Dispatch Ticker**:
+  - Added persistent single-line dispatch ticker below mobile tabs displaying the latest `state.activeLog[0]` police scanner message across all 3 mobile tabs (Map, Actions, Clocks).
+  - Included one-tap `Log →` shortcut to switch directly to the full Comms Log on the Map tab.
+- [x] **Automated Tests (`engine/__tests__/diceNotifications.test.ts`)**:
+  - 5 tests verifying blocked action state, roadblock/blackout behavior, and UI rendering (137/137 tests passing across 11 test suites).
+
+---
+
 ### Phase 28: Voiceover Stems & Audio Atmosphere Expansion 📋
 - [ ] Authentic multilingual audio voice stabs for key NPC introductions across all official South African languages.
 - [ ] Regional procedural soundscape extensions: Highveld thunder and mine lifts, desert wind and Atlantic shore breaks, Cape Doctor gales, and bunker emergency klaxons.

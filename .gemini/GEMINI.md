@@ -186,7 +186,7 @@ For complete developer guidelines on authoring new narrative campaigns or expand
 ## Development Commands
 
 - `npm run dev` — Start the Next.js development server at `http://localhost:3000`
-- `npm test` — Run the automated `vitest` unit test suites (115 tests total across 8 test suites)
+- `npm test` — Run the automated `vitest` unit test suites (137 tests total across 11 test suites)
 - `npx tsc --noEmit` — Run TypeScript typechecking across all game modules
 - `npm run build` — Build production bundle (`out/` static export)
 - `npm start` — Run ultra-low-memory production server (`server.mjs`) for Host Africa HCODE & PaaS (<30MB RAM)
