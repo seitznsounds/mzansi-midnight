@@ -185,22 +185,24 @@ export const HIGHVELD_EVENT_DECK: Record<string, NarrativeEvent> = {
     choices: [
       {
         id: 'choice_tribunal_legal',
-        label: 'Present Complete Evidence: Demand Section 205 Arrests',
+        label: 'Present Complete Evidence: Demand Section 205 Arrests (Clean Hands Victory)',
         description: 'Have the marshals arrest General Sithole and Helena Van Niekerk inside the courtroom.',
         requiredStat: { stat: 'dockets', min: 2 },
         effect: {
           narrativeLog:
             'The court orders immediate arrest! Judicial marshals snap handcuffs on the cartel leadership.',
+          triggerEndingId: 'ending_highveld_siu_vindication',
         },
       },
       {
         id: 'choice_tribunal_public',
-        label: 'Broadcast Evidence Live to the Press Gallery',
+        label: 'Broadcast Evidence Live to the Press Gallery (General Strike Victory)',
         description: 'Release the Midas Cold-Storage files directly to television and union networks.',
         requiredStat: { stat: 'wire', min: 2 },
         effect: {
           narrativeLog:
             'The files hit public airwaves simultaneously. Massive cheers erupt outside the High Court.',
+          triggerEndingId: 'ending_highveld_red_blackout',
         },
       },
     ],
@@ -250,33 +252,46 @@ export const HIGHVELD_EVENT_DECK: Record<string, NarrativeEvent> = {
     choices: [
       {
         id: 'choice_kendon_siu_arrest',
-        label: 'Lead the Hawks & SIU Marshals in a Full Tactical Raid',
+        label: 'Lead the Hawks & SIU Marshals in a Full Tactical Raid (Clean Hands Ending)',
         description: 'Execute the Section 205 warrants, seize the tanker convoy, and take Sithole alive.',
         requiredStat: { stat: 'dockets', min: 2 },
         effect: {
           narrativeLog:
             'Blue lights flood the depot! The Hawks tactical team breaches the gates and surrounds the cartel.',
+          triggerEndingId: 'ending_highveld_siu_vindication',
         },
       },
       {
         id: 'choice_kendon_red_strike',
-        label: 'Signal Vusi’s Red Guard to Block the Convoy Gates',
+        label: 'Signal Vusi’s Red Guard to Block the Convoy Gates (General Strike Ending)',
         description: 'Unleash four thousand union truck drivers to seize the depot and seize the diesel.',
         requiredStat: { stat: 'street', min: 2 },
         effect: {
           narrativeLog:
             'Union air horns blare as hundreds of trucks blockade the depot exits, trapping the cartel.',
+          triggerEndingId: 'ending_highveld_red_blackout',
         },
       },
       {
         id: 'choice_kendon_sandton_deal',
-        label: 'Accept Helena’s Offer: Take the Offshore Diamonds',
+        label: 'Accept Helena’s Offer: Take the Offshore Diamonds (Shadow Partner Ending)',
         description: 'Board the Maybach, accept the Swiss accounts, and leave the Highveld behind.',
         requiredStat: { stat: 'influence', min: 2 },
         effect: {
           cashDelta: 50000,
           narrativeLog:
             'You slip your gun into your coat and step into Helena’s Maybach. The past is erased in gold.',
+          triggerEndingId: 'ending_highveld_arbitrage_partner',
+        },
+      },
+      {
+        id: 'choice_kendon_overrun',
+        label: 'Overrun by Cartel Mercenaries (Reef Tomb Ending)',
+        description: 'Stand your ground without sufficient tactical leverage as the mercenaries close in.',
+        effect: {
+          narrativeLog:
+            'Mercenary crossfire traps your team at the weighbridge. The emergency decrees are signed as the grid collapses.',
+          triggerEndingId: 'ending_highveld_shaft_collapse',
         },
       },
     ],

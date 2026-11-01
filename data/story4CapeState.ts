@@ -21,7 +21,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
         title: 'Surveil Nightclub Protection Rings',
         description: 'Plant wireless sniffer bugs behind the VIP bar booths to intercept bouncer payoff logs.',
         stat: 'wire',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -29,7 +29,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
             clockProgress: [{ clockId: 'nightclub_extortion_clock', delta: 2 }],
             composureDelta: 5,
             cashDelta: 350,
-            unlockNodeIds: ['c3_camps_bay_promenade', 'c4_table_bay_container_berth'],
+            unlockNodeIds: ['c2_manenberg_tenements', 'c3_camps_bay_promenade', 'c4_table_bay_container_berth'],
             narrativeLog:
               'You intercept an encrypted voice note: every club along the strip pays R40k a week directly to Foreshore Holdings.',
           },
@@ -38,6 +38,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
               { clockId: 'nightclub_extortion_clock', delta: 1 },
               { clockId: 'gang_turf_war_clock', delta: 1 },
             ],
+            unlockNodeIds: ['c2_manenberg_tenements', 'c4_table_bay_container_berth'],
             narrativeLog:
               'You clone a bouncer supervisor’s call logs, but an enforcer with a radio earpiece spots you loitering in the alley.',
           },
@@ -61,6 +62,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
           clean: {
             clockProgress: [{ clockId: 'nightclub_extortion_clock', delta: 1 }],
             factionRepDelta: [{ factionId: 'long_street_racket', delta: 1 }],
+            unlockNodeIds: ['c2_manenberg_tenements'],
             composureDelta: 10,
             narrativeLog:
               'Zack spits out a chewed toothpick. "We don’t buy from gangs, Leila. Our rifles come off the Table Bay container ships with police escort."',
@@ -68,6 +70,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
           compromised: {
             composureDelta: -5,
             clockProgress: [{ clockId: 'gang_turf_war_clock', delta: 1 }],
+            unlockNodeIds: ['c2_manenberg_tenements'],
             narrativeLog:
               'Zack gives up a warehouse code, but warns that 28s street soldiers are staking out the corner.',
           },
@@ -116,7 +119,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
     tier: 'street_west',
     x: 48,
     y: 52,
-    isUnlocked: false,
+    isUnlocked: true,
     connectedNodeIds: [
       'c1_long_street_strip',
       'c6_agu_safehouse_ruin',
@@ -128,7 +131,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
         title: 'Map Gang Weapon Distribution Lines',
         description: 'Track the modified delivery scooters delivering fresh crated ammunition to local gang commanders.',
         stat: 'street',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -200,7 +203,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
         title: 'Wiretap Oligarch Villa Telemetry',
         description: 'Position an RF receiver on the rocks beneath Victoria Road to tap the Capital Club villa routers.',
         stat: 'wire',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -278,7 +281,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
         title: 'Audit Stevedore Pier Manifests',
         description: 'Breach the terminal operations office to verify container customs evasion logs.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -458,7 +461,7 @@ export const CAPE_NODES: Record<string, MapNode> = {
         title: 'Run Striation Ballistics Comparison',
         description: 'Compare the recovered 9mm murder projectile against Major-General Swart’s registered service weapon.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {

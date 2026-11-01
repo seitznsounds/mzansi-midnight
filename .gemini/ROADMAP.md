@@ -561,5 +561,36 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
   - 10 comprehensive unit tests covering formant parameters, earcons, fuzzy resolvers across all 5 stories, regional acoustics, and non-blocking headless execution (152/152 tests passing across 13 test suites).
   - TypeScript validation passed (`tsc --noEmit`), Next.js static build verified (`npm run build`), and Android assets synced (`npx cap sync android`).
 
+---
+
+### Phase 29: Logical Story Progression, Graph Reachability & Campaign Endings Audit ✅
+- [x] **Campaign Graph Reachability & Unlocking Verification**:
+  - Audited mathematical node reachability from starting states across all 5 stories:
+    - **Story 1 Act 1 (eThekwini-Gold)** & **Act 2 (Commission of Inquiry)**.
+    - **Story 2 (Highveld-Chrome)**.
+    - **Story 3 (Namaqua-Diamond)**.
+    - **Story 4 (Cape-Nocturne)**.
+    - **Story 5 (The Sovereign Octagon)**.
+  - **Fixed Unreachable Cape Nodes (`data/story4CapeState.ts`)**: Unlocked `c2_manenberg_tenements` initially establishing dual starting hubs on the Cape alongside Long Street, and added unlock leads to `slot_c1_interrogate_bouncer` and `slot_c1_surveil_nightclubs`, granting access to the entire Cape Flats and Pastor Ronnie Jacobs plotline.
+  - **Fixed Dead-End Octagon Redoubt Corridors (`data/story5OctagonState.ts`)**: Unlocked `o4_durban_berth_command` via `slot_o1_war_room_synthesis`, `o5_karoo_airspace_corridor` via `slot_o3_reboot_scada_breakers` and `slot_o4_mobilize_harbour_blockade`, and `o6_stellenbosch_oligarch_vault` / `o7_octagon_summit_chamber` via `slot_o5_jam_executive_radar`.
+- [x] **Eliminated Turn-1 Soft-Locks & Deadlock Traps**:
+  - Cured turn-1 failure deadlocks across Story 3 (`data/story3NamaquaState.ts`): converted `slot_d1_dive_survey`, `slot_d2_gravel_dive`, `slot_d3_runner_routes`, `slot_d4_search_mine_vault`, `slot_d5_intercept_arms_pont`, and `slot_d6_infiltrate_radar` to `isRepeatable: true`.
+  - Made core investigative slots repeatable across Story 4 (`slot_c1_surveil_nightclubs`, `slot_c2_street_surveillance`, `slot_c3_intercept_villa_comms`, `slot_c4_audit_customs_manifest`, `slot_c6_analyze_partner_ballistics`) and Story 5 (`slot_o1_war_room_synthesis`, `slot_o2_secure_executive_seal`, `slot_o3_extract_omega_charter`, `slot_o4_intercept_arms_convoy`, `slot_o5_intercept_courier_flight`, `slot_o6_freeze_swiss_escrow`, `slot_o7_breach_command_sanctum`).
+- [x] **Item Economy & Equipment Prerequisite Consistency**:
+  - Audited all action slot and narrative event `requiredItem` checks.
+  - Verified 100% of required items are obtainable within their respective campaigns via node vendors or action slot clean/compromised loot outcomes.
+- [x] **100% Campaign Ending Triggers & Climax Wiring (`data/story2HighveldEvents.ts`)**:
+  - Wired missing ending triggers to Highveld climax choices in `evt_highveld_climax_kendon` and `evt_highveld_tribunal_showdown`:
+    - `ending_highveld_siu_vindication` (State Capture Special Investigating Unit tribunal).
+    - `ending_highveld_red_blackout` (Redguard grid sabotage blackout).
+    - `ending_highveld_arbitrage_partner` (Sandton corporate collusion arbitrage).
+    - `ending_highveld_shaft_collapse` (Terminal mine overrun collapse).
+  - Verified all 25 campaign endings in `ALL_CAMPAIGN_ENDINGS` have active, reachable triggers in their story event decks.
+- [x] **Automated Regression & Audit Suite (`engine/__tests__/storyProgressionAudit.test.ts`)**:
+  - 26 tests verifying graph connectivity, turn-1 recovery, item availability, ending metadata, and ending triggers.
+  - 178/178 tests passing across all 14 test suites in Vitest.
+  - 0 TypeScript errors (`npx tsc --noEmit`), clean Next.js build (`npm run build`), and Android assets synced (`npx cap sync android`).
+
+
 
 

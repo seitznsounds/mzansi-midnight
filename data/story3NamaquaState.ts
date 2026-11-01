@@ -18,7 +18,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Cross-reference multi-beam acoustic seabed charts with illegal diamond dredge trenches cutting through maritime concession lines.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         requiredItem: 'evidence_sonar_bathymetry_log',
@@ -120,7 +120,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Drop thirty meters down through freezing kelp forests with an artisanal gravel suction hose to recover uncertified gravel parcels.',
         stat: 'street',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -200,7 +200,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Consult Swartbooi Witbooi on the dry wash routes used to move high-value stones past military roadblocks.',
         stat: 'street',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -300,7 +300,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Pick the reinforced brass lock of the old sorting house to inspect illicit diamond sorting tables.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -377,7 +377,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Track the midnight pontoon boat ferrying unmarked military crate shipments across the river shallows.',
         stat: 'wire',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -481,7 +481,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Slip through the compound perimeter during a fog surge and extract the coastal surveillance logs and arms consignments.',
         stat: 'wire',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -560,7 +560,7 @@ export const NAMAQUA_NODES: Record<string, MapNode> = {
         description:
           'Submit the dredged diamond evidence and mercenary cargo logs to Captain Cloete to obtain an emergency maritime arrest warrant.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         requiredItem: 'evidence_aegis_arms_bill',

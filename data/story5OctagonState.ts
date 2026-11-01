@@ -21,7 +21,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Synthesize 4-Story Keystone Evidentiary Dossier',
         description: 'Cross-reference Durban water tenders, Highveld coal logs, Namaqua arms manifests, and Cape protection dockets.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -29,13 +29,20 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
             clockProgress: [{ clockId: 'treason_indictment_docket', delta: 2 }],
             composureDelta: 15,
             cashDelta: 500,
-            unlockNodeIds: ['o2_union_buildings_subbasement', 'o3_apollo_grid_command'],
+            unlockNodeIds: [
+              'o2_union_buildings_subbasement',
+              'o3_apollo_grid_command',
+              'o4_durban_berth_command',
+            ],
             narrativeLog:
               'The four regional keystones interlock perfectly: every transaction traces directly to the Sovereign Octagon’s Swiss escrow accounts.',
           },
           compromised: {
             clockProgress: [{ clockId: 'treason_indictment_docket', delta: 1 }],
-            unlockNodeIds: ['o3_apollo_grid_command'],
+            unlockNodeIds: [
+              'o3_apollo_grid_command',
+              'o4_durban_berth_command',
+            ],
             narrativeLog:
               'You bind the dockets into an emergency indictment, though encrypted financial ledgers still require Apollo SCADA verification.',
           },
@@ -97,13 +104,14 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Secure High Court Constitutional Arrest Warrants',
         description: 'Present the consolidated state capture docket to the Deputy Chief Justice for immediate Section 179 execution.',
         stat: 'influence',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
           clean: {
             addInventoryItem: 'evidence_constitutional_indictment',
             clockProgress: [{ clockId: 'treason_indictment_docket', delta: 2 }],
+            unlockNodeIds: ['o7_octagon_summit_chamber'],
             composureDelta: 20,
             narrativeLog:
               'The Deputy Chief Justice stamps the master arrest warrants under armed High Court marshal protection: the eight conspirators are officially outlawed.',
@@ -111,6 +119,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
           compromised: {
             addInventoryItem: 'evidence_constitutional_indictment',
             clockProgress: [{ clockId: 'treason_indictment_docket', delta: 1 }],
+            unlockNodeIds: ['o7_octagon_summit_chamber'],
             narrativeLog:
               'The warrants are executed, but rogue State Security snipers surround the Union Buildings gardens.',
           },
@@ -178,12 +187,14 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         outcomes: {
           clean: {
             clockProgress: [{ clockId: 'national_blackout_countdown', delta: -2 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             composureDelta: 15,
             narrativeLog:
               'Chief Engineer Motaung locks the hydraulic breakers: pumped-storage hydro generators fire up, stabilizing grid frequency above 48.5 Hz.',
           },
           compromised: {
             clockProgress: [{ clockId: 'national_blackout_countdown', delta: -1 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             narrativeLog:
               'You stabilize the northern transmission grid, though southern corridors remain locked under Stage 6 shed cycles.',
           },
@@ -200,14 +211,14 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Extract The Sovereign Octagon Omega Charter',
         description: 'Breach the Tier-0 SCADA mainframe to copy the unredacted master agreement for Operation Midnight Sun.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
           clean: {
             addInventoryItem: 'evidence_omega_protocol',
             clockProgress: [{ clockId: 'decrypt_master_omega_cipher', delta: 2 }],
-            unlockNodeIds: ['o7_octagon_summit_chamber'],
+            unlockNodeIds: ['o5_karoo_airspace_corridor', 'o7_octagon_summit_chamber'],
             composureDelta: 15,
             narrativeLog:
               'The master document is decrypted: the 8 conspirators have pre-signed the decree to dissolve Parliament and privatize state security.',
@@ -215,7 +226,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
           compromised: {
             addInventoryItem: 'evidence_omega_protocol',
             clockProgress: [{ clockId: 'decrypt_master_omega_cipher', delta: 1 }],
-            unlockNodeIds: ['o7_octagon_summit_chamber'],
+            unlockNodeIds: ['o5_karoo_airspace_corridor', 'o7_octagon_summit_chamber'],
             narrativeLog:
               'You secure the encrypted charter, but an automated alert notifies the Octagon summit security detail.',
           },
@@ -282,6 +293,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
           clean: {
             clockProgress: [{ clockId: 'midnight_sun_coup_countdown', delta: -2 }],
             factionRepDelta: [{ factionId: 'people_resistance_front', delta: 2 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             composureDelta: 15,
             narrativeLog:
               'Ten thousand minibus taxis and heavy straddle carriers barricade all highway exits and container berths. The conspirators are trapped.',
@@ -289,6 +301,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
           compromised: {
             clockProgress: [{ clockId: 'midnight_sun_coup_countdown', delta: -1 }],
             factionRepDelta: [{ factionId: 'people_resistance_front', delta: 1 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             narrativeLog:
               'Port workers establish razor-wire choke points across Berth 109, stalling mercenary convoys.',
           },
@@ -304,13 +317,14 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Ambush Mercenary Logistics Convoy',
         description: 'Intercept the armored transports ferrying tactical rifles and night-vision equipment from the coast.',
         stat: 'street',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
           clean: {
             cashDelta: 800,
             clockProgress: [{ clockId: 'octagon_mercenary_sweep', delta: -2 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             composureDelta: 10,
             narrativeLog:
               'You disable the lead transport with spike strips. Dockers secure four crates of assault rifles and R800 in courier cash.',
@@ -318,6 +332,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
           compromised: {
             cashDelta: 400,
             clockProgress: [{ clockId: 'octagon_mercenary_sweep', delta: -1 }],
+            unlockNodeIds: ['o5_karoo_airspace_corridor'],
             narrativeLog:
               'You capture one support bakkie while the primary transport escapes through port back gates.',
           },
@@ -357,12 +372,14 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         outcomes: {
           clean: {
             clockProgress: [{ clockId: 'airspace_radar_jamming', delta: -2 }],
+            unlockNodeIds: ['o6_stellenbosch_oligarch_vault', 'o7_octagon_summit_chamber'],
             composureDelta: 15,
             narrativeLog:
               'You sever the primary radar transmitter feeds: commercial air traffic control radar and Taskforce telemetry snap back online.',
           },
           compromised: {
             clockProgress: [{ clockId: 'airspace_radar_jamming', delta: -1 }],
+            unlockNodeIds: ['o6_stellenbosch_oligarch_vault'],
             narrativeLog:
               'You blind the local tactical relay, clearing a narrow radar corridor for Taskforce air assets.',
           },
@@ -379,19 +396,21 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Ground Executive Charter Jet ZS-900',
         description: 'Use radar coordinates to vector interceptors onto the executive Gulfstream ferrying the Octagon’s bullion reserve.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
           clean: {
             cashDelta: 1200,
             clockProgress: [{ clockId: 'decrypt_master_omega_cipher', delta: 1 }],
+            unlockNodeIds: ['o6_stellenbosch_oligarch_vault', 'o7_octagon_summit_chamber'],
             composureDelta: 15,
             narrativeLog:
               'The executive jet is forced down at an arid desert airstrip. You seize R1,200 operational cash and diplomatic crypto-pouches.',
           },
           compromised: {
             cashDelta: 600,
+            unlockNodeIds: ['o6_stellenbosch_oligarch_vault'],
             narrativeLog:
               'The flight diverts to a private diamond runway, dumping half its cargo in the dunes before takeoff.',
           },
@@ -424,7 +443,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Freeze Mercenary Sovereign Payroll Accounts',
         description: 'Execute international Section 205 freeze orders on the Geneva and Mauritius trust accounts bankrolling private armies.',
         stat: 'influence',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -454,7 +473,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Raid Subterranean Oligarch Vault',
         description: 'Crack the electronic biometric safe to retrieve personal correspondence between the eight founders.',
         stat: 'dockets',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -501,7 +520,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Breach the Fortified Summit Chamber',
         description: 'Lead the combined Taskforce breach team through the blast doors during the 90-second blackout breaker reboot.',
         stat: 'any',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
@@ -528,7 +547,7 @@ export const OCTAGON_NODES: Record<string, MapNode> = {
         title: 'Transmit Unified Master Dossier to High Court & Public',
         description: 'Upload the complete unredacted Omega Protocol from the central terminal directly to all nine provincial high courts.',
         stat: 'wire',
-        isRepeatable: false,
+        isRepeatable: true,
         isCompleted: false,
         costCash: 0,
         outcomes: {
