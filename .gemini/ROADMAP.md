@@ -502,6 +502,27 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
 
 ---
 
+### Phase 27f: Mobile Responsiveness, Tactical Map Beacons & HUD Menu Optimization ✅
+- [x] **District Map Mobile Node Collision Elimination (`components/DistrictSvgMap.tsx`)**:
+  - Replaced wide rectangular HTML cards (`w-28` to `w-44`), which collided and stacked on top of one another on mobile viewports (<640px), with tactile, circular **Tactical Beacon Pins** (`w-9 h-9` / `w-10 h-10`).
+  - Centered exactly on the node's `(x, y)` coordinate with glowing faction border rings, high-contrast node alphanumeric code (`N1`–`N12`, `H1`–`H7`, `O1`–`O7`), golden location radar pulse (`★`), and micro-indicators for Stage 6 lockout (`⚡`), diesel (`D`), or stealth bonus (`+2`).
+  - Adjacent nodes now have >70px clearance on standard 360px–412px viewports with zero overlap.
+  - Locked leads render as dimmed dashed circular beacons with lock icons (`🔒`).
+- [x] **Mobile Active Node Focus Bar (`components/DistrictSvgMap.tsx`)**:
+  - Docked at the bottom of the map on mobile viewports: displays selected node's title, district, faction pill, `HERE` status, available slots, and a direct `ACTIONS →` CTA that transitions seamlessly to the actions tab (`onInspectNode`).
+  - Preserved rich, multi-line cards on tablet and desktop screens (`sm:` and `lg:`).
+  - Configured responsive container minimum height (`min-h-[290px] xs:min-h-[320px] sm:min-h-[360px]`) and enabled vertical scrolling (`overflow-y-auto lg:overflow-hidden`) on mobile.
+- [x] **Top Header HUD Zero-Overflow Redesign (`components/GameDashboard.tsx`)**:
+  - **Row 1**: Dedicated two-sided layout separating mission cycle, tension/adrenaline meter, and load shedding stage on the left from cash (`R{cash}`) and composure bar on the right with strict non-wrapping spacing.
+  - **Row 2**: Consolidated the 4 loose investigator attributes (`STRT`, `DCKT`, `WIRE`, `INFL`) into a unified, sleek tactical chip alongside the elapsed speedrun stopwatch (`⏱️ 00:00`), taking under 190px of width. Added compact quick actions (`◈ BOARD`, `💾 SAVE`, direct `⚙` Settings shortcut, and `☰ OPS`).
+  - **Desktop/Tablet Responsive Collapse (1024px–1440px)**: Secondary buttons (`SCORES`, `STATUS`, `GUIDE`, `SETTINGS`) collapse text labels on 1024px–1279px, expanding on wide screens (`xl:`, `2xl:`), preventing horizontal spilling.
+- [x] **Conspiracy Board Mobile Pin Scaling (`components/ConspiracyBoardModal.tsx`)**:
+  - Scaled pin cards on mobile from `w-36` down to `w-28 xs:w-32 sm:w-48` with compact typography and pushpins, eliminating card collisions on the corkboard canvas.
+- [x] **Automated Architecture Test Suite (`engine/__tests__/mobileMapAndHud.test.ts`)**:
+  - 5 tests verifying node tactical code generation, cartographic coordinate boundaries across all 5 story campaigns, 4-attribute chip string length (<45 chars), localized focus bar data, and callback invocation (142/142 tests passing across 12 test suites).
+
+---
+
 ### Phase 28: Voiceover Stems & Audio Atmosphere Expansion 📋
 - [ ] Authentic multilingual audio voice stabs for key NPC introductions across all official South African languages.
 - [ ] Regional procedural soundscape extensions: Highveld thunder and mine lifts, desert wind and Atlantic shore breaks, Cape Doctor gales, and bunker emergency klaxons.

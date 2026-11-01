@@ -1200,28 +1200,28 @@ export const ConspiracyBoardModal: React.FC<{
                   left: `${pin.x}%`,
                   top: `${pin.y}%`,
                 }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 w-36 sm:w-48 p-2 sm:p-2.5 rounded-xl border text-left transition-all cursor-pointer shadow-lg ${
+                className={`absolute -translate-x-1/2 -translate-y-1/2 w-28 xs:w-32 sm:w-48 p-1.5 sm:p-2.5 rounded-xl border text-left transition-all cursor-pointer shadow-lg ${
                   isSelected
                     ? 'bg-zinc-900 border-amber-400 ring-2 ring-amber-400/30 z-20 scale-105'
                     : 'bg-zinc-900/95 border-zinc-700 hover:border-red-400/70 z-10'
                 }`}
               >
                 {/* Red Pushpin */}
-                <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-red-500 border border-red-200 shadow" />
+                <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500 border border-red-200 shadow" />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   {pin.avatar && (
                     <img
                       src={pin.avatar}
                       alt={pin.title}
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-cover border border-amber-500/40 shrink-0 hidden sm:block"
+                      className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg object-cover border border-amber-500/40 shrink-0 hidden sm:block"
                     />
                   )}
                   <div className="min-w-0">
-                    <div className="font-mono text-[8px] sm:text-[9px] uppercase tracking-wider text-red-400 truncate">
+                    <div className="font-mono text-[7px] xs:text-[8px] sm:text-[9px] uppercase tracking-wider text-red-400 truncate">
                       {pin.tag}
                     </div>
-                    <div className="text-[11px] sm:text-xs font-semibold text-white truncate">
+                    <div className="text-[10px] xs:text-[11px] sm:text-xs font-semibold text-white truncate">
                       {pin.title}
                     </div>
                     <div className="font-mono text-[9px] text-zinc-400 truncate hidden sm:block">
