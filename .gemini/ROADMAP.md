@@ -523,9 +523,43 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
 
 ---
 
-### Phase 28: Voiceover Stems & Audio Atmosphere Expansion 📋
-- [ ] Authentic multilingual audio voice stabs for key NPC introductions across all official South African languages.
-- [ ] Regional procedural soundscape extensions: Highveld thunder and mine lifts, desert wind and Atlantic shore breaks, Cape Doctor gales, and bunker emergency klaxons.
+### Phase 28: Voiceover Stems & Audio Atmosphere Expansion ✅
+- [x] **Regional Procedural Soundscape Engine (`engine/soundscape.ts`)**:
+  - Implemented real-time Web Audio procedural synthesis tailored to each of the 5 campaign stories:
+    - **Story 1 (eThekwini-Gold)**: Coastal subtropical rain (950Hz bandpass), 55Hz Eskom substation hum, and deep 110Hz/138.59Hz minor harbor foghorn.
+    - **Story 2 (Highveld-Chrome)**: Lowpass summer thunder rumble (240Hz), 88Hz industrial mining winch hum, and rolling thunder crack down to 34Hz.
+    - **Story 3 (Namaqua-Diamond)**: Atlantic swept desert wind (480Hz bandpass), 44Hz Benguela surf swell drone, and 698.46Hz Alexander Bay bronze fog bell.
+    - **Story 4 (Cape-Nocturne)**: Resonant Cape Doctor gale (1150Hz bandpass, Q=4.2), 65Hz nocturnal city grid drone, and 1480Hz/1920Hz street whistle.
+    - **Story 5 (Sovereign Octagon)**: Underground bunker HVAC airflow (160Hz lowpass), 38Hz Cold War sub-bass drone, and alternating 880Hz/660Hz SCADA emergency klaxons.
+  - Added smooth cross-fading via `setRegionalAtmosphere(storyId, { loadSheddingStage, adrenalineLevel })` that adapts to Load Shedding Stage 6 blackouts and high adrenaline peaks.
+  - Added `playBlockedWarning()` for distinctive tactile audio feedback when actions are blocked (insufficient cash, locked corridors, or blackouts).
+- [x] **Multilingual Voice Stabs & Acoustic Earcons Registry (`engine/voiceStems.ts`)**:
+  - Registered 17 authentic NPC voice profiles across South African languages with dual-bandpass formant synthesis (throat F1 cavity & mouth F2 cavity driven by glottal pulse oscillators):
+    - **Bra Bheki** (*"Sho, mfowethu"*, folder snap earcon, 105Hz baritone).
+    - **Constable Nandi** (*"Sbu..."*, tactical radio squelch earcon, 220Hz whisper).
+    - **Brigadier Mokoena** (*"Hawu..."*, TRT police chirp earcon, 115Hz command).
+    - **Ma-Sibi Khumalo** (*"Sawubona"*, luxury penthouse chime earcon, 195Hz soprano).
+    - **Sparks** (*"Signal's live"*, 1200-baud modem burst earcon, 155Hz chatter).
+    - **Zuko Ndlovu** (*"Heita"*, harbor kingpin drawl, 98Hz bass).
+    - **Colonel van der Merwe** (*"Middag"*, mechanical typewriter strike earcon, 110Hz).
+    - **Bra K Molefe** (*"Dumela"*, forensic auditor dossier snap, 125Hz).
+    - **Nomsa Khumalo** (*"Agee"*, advocate boardroom chime, 210Hz).
+    - **Vusi Sithole** (*"Heita da"*, union strike whistle/chirp, 130Hz).
+    - **Tannie Bettie** (*"Môre, seun"*, coastal fog bell earcon, 185Hz).
+    - **Swartbooi Witbooi** (*"Goeiedag"*, desert runner radio squelch, 110Hz).
+    - **Colonel Petrov** (*"Petrov here"*, naval privateer chirp, 95Hz).
+    - **Pastor Ronnie** (*"Aweh, my broe"*, Cape Flats street truce whistle, 120Hz).
+    - **Zack Rossouw** (*"Wat soek jy?"*, bouncer shakedown rasp, 100Hz).
+    - **Claudine de Villiers** (*"Bonsoir"*, winelands aristocratic chime, 230Hz).
+    - **Hawk Taskforce** (*"Protocol verified"*, bunker satellite scrambler, 135Hz).
+  - Built `resolveContactVoiceProfile(contactOrNodeId)` mapping both raw contact keys and all district map node IDs across all 5 stories with fallback handling.
+- [x] **UI & Gameplay Integration (`components/ContactDialogueModal.tsx` & `components/GameDashboard.tsx`)**:
+  - Automatically triggers character voice stabs on opening dialogue modal with interactive `🔊 "[Greeting]"` replay pill in the header.
+  - Synchronizes regional soundscape atmosphere across active story IDs, load shedding transitions, and adrenaline shifts.
+  - Linked `playBlockedWarning()` to dice assignment shortfall dispatches.
+- [x] **Automated Test Suite & Verification (`engine/__tests__/soundscapeAndVoiceStems.test.ts`)**:
+  - 10 comprehensive unit tests covering formant parameters, earcons, fuzzy resolvers across all 5 stories, regional acoustics, and non-blocking headless execution (152/152 tests passing across 13 test suites).
+  - TypeScript validation passed (`tsc --noEmit`), Next.js static build verified (`npm run build`), and Android assets synced (`npx cap sync android`).
 
 
 

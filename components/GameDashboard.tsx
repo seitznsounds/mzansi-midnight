@@ -836,6 +836,14 @@ export const GameDashboard: React.FC<{
 
   const adrenaline = calculateAdrenaline(state);
 
+  // Synchronize dynamic regional Web Audio atmosphere across 5 campaign stories
+  useEffect(() => {
+    soundscape.setRegionalAtmosphere(state.storyId, {
+      loadSheddingStage: state.loadSheddingStage,
+      adrenalineLevel: adrenaline.level,
+    });
+  }, [state.storyId, state.loadSheddingStage, adrenaline.level]);
+
   // Auto-trigger cinematic cutscene when a climax showdown event reaches the queue
   useEffect(() => {
     const topEventId = state.triggeredEventsQueue[0];
@@ -952,7 +960,7 @@ export const GameDashboard: React.FC<{
     const activeDieId = dieId || selectedDieId;
 
     if (!activeDieId) {
-      soundscape.playOutcome('failure');
+      soundscape.playBlockedWarning();
       triggerHaptic('warning');
       setLastResolvedSlotId(slotId);
       setLastRollFeedback({
@@ -1006,7 +1014,7 @@ export const GameDashboard: React.FC<{
       });
       setSelectedDieId(null);
     } else {
-      soundscape.playOutcome('failure');
+      soundscape.playBlockedWarning();
       triggerHaptic('warning');
       setLastResolvedSlotId(slotId);
 
@@ -1087,6 +1095,9 @@ export const GameDashboard: React.FC<{
 
     const nextState = advanceToNextDay(state);
     soundscape.playCycleRoll(nextState.loadSheddingStage === 6);
+    if (nextState.loadSheddingStage === 6) {
+      setTimeout(() => soundscape.playRegionalStinger(state.storyId), 550);
+    }
 
     setTimeout(() => {
       setState(nextState);
@@ -1962,7 +1973,7 @@ export const GameDashboard: React.FC<{
 
                   <button
                     onClick={() => {
-                      soundscape.playDieSelect();
+                      soundscape.playContactVoiceStab(activeNode.id, currentLang);
                       setIsContactDialogueOpen(true);
                     }}
                     className="relative flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/50 text-amber-300 font-mono text-[11px] uppercase tracking-wider transition-colors cursor-pointer shrink-0"

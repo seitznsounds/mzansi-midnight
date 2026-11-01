@@ -1,6 +1,7 @@
 import { GameState } from '../types/game';
 
 export const initialGameState: GameState = {
+  storyId: 'story_1_ethekwini',
   day: 1,
   cash: 650, // Starting with R650
   composure: 85, // Starts at 85% (5 action dice)

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   canSelectDialogueResponse,
   ALL_CONTACT_DIALOGUES,
@@ -12,6 +12,7 @@ import {
 import { ITEMS_CATALOG } from '../data/itemsCatalog';
 import { applyDialogueReward } from '../engine/resolver';
 import { soundscape } from '../engine/soundscape';
+import { resolveContactVoiceProfile } from '../engine/voiceStems';
 import { FactionId, GameState } from '../types/game';
 import { SupportedLanguage } from '../types/settings';
 import {
@@ -50,6 +51,13 @@ export default function ContactDialogueModal({
   const [lastClaimedBanner, setLastClaimedBanner] = useState<string | null>(
     null
   );
+
+  const voiceProfile = resolveContactVoiceProfile(nodeId);
+
+  // Trigger authentic character voice stab and acoustic earcon on contact dialogue open
+  useEffect(() => {
+    soundscape.playContactVoiceStab(nodeId, lang);
+  }, [nodeId, lang]);
 
   if (!tree) return null;
 
@@ -131,9 +139,20 @@ export default function ContactDialogueModal({
                   </span>
                 )}
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-white mt-0.5">
-                {tree.contactName}
-              </h3>
+              <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                <h3 className="text-lg sm:text-xl font-semibold text-white">
+                  {tree.contactName}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => soundscape.playContactVoiceStab(nodeId, lang)}
+                  className="group inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/60 hover:border-amber-400 text-amber-300 font-mono text-[10px] transition-all cursor-pointer shadow-sm"
+                  title={`Voice stem: "${voiceProfile.nativeGreeting}" (${voiceProfile.transcription})`}
+                >
+                  <span className="text-[11px] group-hover:scale-110 transition-transform">🔊</span>
+                  <span className="font-semibold tracking-wide">"{voiceProfile.nativeGreeting}"</span>
+                </button>
+              </div>
               <p className="font-mono text-xs text-zinc-400">
                 {tree.contactRole}
               </p>
