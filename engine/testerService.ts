@@ -6,6 +6,12 @@ export const PLAY_STORE_APP_URL =
 export const PLAY_STORE_OPT_IN_URL =
   'https://play.google.com/apps/testing/za.co.mzansimidnight.app';
 export const PLAY_STORE_TESTER_LIST_NAME = 'Visita Testers';
+export const GOOGLE_GROUP_WEB_URL =
+  'https://groups.google.com/g/visita-app-testers';
+export const GOOGLE_GROUP_EMAIL =
+  'visita-app-testers@googlegroups.com';
+export const GOOGLE_GROUP_SUBSCRIBE_MAILTO =
+  'mailto:visita-app-testers+subscribe@googlegroups.com?subject=Join%20Visita%20App%20Testers&body=Please%20add%20me%20to%20the%20closed%20testing%20group.';
 
 export const LOCAL_PLAY_TESTER_KEY = 'mzansi_midnight_play_tester_v1';
 

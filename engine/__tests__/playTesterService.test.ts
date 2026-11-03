@@ -9,6 +9,9 @@ import {
   PLAY_STORE_OPT_IN_URL,
   PLAY_STORE_PACKAGE_ID,
   PLAY_STORE_TESTER_LIST_NAME,
+  GOOGLE_GROUP_WEB_URL,
+  GOOGLE_GROUP_EMAIL,
+  GOOGLE_GROUP_SUBSCRIBE_MAILTO,
   GOOGLE_PLAY_REQUIREMENT_NOTICE,
   LOCAL_PLAY_TESTER_KEY,
 } from '../testerService';
@@ -47,6 +50,13 @@ describe('Google Play Tester Service & Visita Testers Management', () => {
         'https://play.google.com/apps/testing/za.co.mzansimidnight.app'
       );
       expect(PLAY_STORE_TESTER_LIST_NAME).toBe('Visita Testers');
+      expect(GOOGLE_GROUP_WEB_URL).toBe(
+        'https://groups.google.com/g/visita-app-testers'
+      );
+      expect(GOOGLE_GROUP_EMAIL).toBe('visita-app-testers@googlegroups.com');
+      expect(GOOGLE_GROUP_SUBSCRIBE_MAILTO).toContain(
+        'visita-app-testers+subscribe@googlegroups.com'
+      );
     });
 
     it('contains explicit stipulations for Google Play closed testing requirements', () => {

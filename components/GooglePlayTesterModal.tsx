@@ -9,6 +9,9 @@ import {
   PLAY_STORE_OPT_IN_URL,
   PLAY_STORE_PACKAGE_ID,
   PLAY_STORE_TESTER_LIST_NAME,
+  GOOGLE_GROUP_WEB_URL,
+  GOOGLE_GROUP_EMAIL,
+  GOOGLE_GROUP_SUBSCRIBE_MAILTO,
   GOOGLE_PLAY_REQUIREMENT_NOTICE,
   getRegisteredTester,
   registerPlayTester,
@@ -236,6 +239,27 @@ export const GooglePlayTesterModal: React.FC<GooglePlayTesterModalProps> = ({
                   <span>Web Testing Opt-In</span>
                   <span className="text-xs">↗</span>
                 </a>
+
+                <a
+                  href={GOOGLE_GROUP_WEB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-cyan-300 border border-cyan-500/40 text-[11px] uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <span>👥</span>
+                  <span>Google Group Hub</span>
+                  <span className="text-[10px]">↗</span>
+                </a>
+
+                <a
+                  href={GOOGLE_GROUP_SUBSCRIBE_MAILTO}
+                  className="p-2.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-amber-300 border border-amber-500/40 text-[11px] uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  title="Sends an empty email to subscribe your Google account instantly"
+                >
+                  <span>✉️</span>
+                  <span>1-Click Email Subscribe</span>
+                  <span className="text-[10px]">↗</span>
+                </a>
               </div>
             </div>
           ) : (
@@ -315,6 +339,22 @@ export const GooglePlayTesterModal: React.FC<GooglePlayTesterModalProps> = ({
                       className="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-500/30 text-[11px] font-mono flex items-center gap-1.5"
                     >
                       <span>Web Testing Opt-In</span>
+                      <span>↗</span>
+                    </a>
+                    <a
+                      href={GOOGLE_GROUP_WEB_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/50 hover:bg-purple-500/30 text-[11px] font-mono flex items-center gap-1.5"
+                    >
+                      <span>Google Group Hub</span>
+                      <span>↗</span>
+                    </a>
+                    <a
+                      href={GOOGLE_GROUP_SUBSCRIBE_MAILTO}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 hover:bg-amber-500/30 text-[11px] font-mono flex items-center gap-1.5"
+                    >
+                      <span>1-Click Email Subscribe</span>
                       <span>↗</span>
                     </a>
                   </div>
