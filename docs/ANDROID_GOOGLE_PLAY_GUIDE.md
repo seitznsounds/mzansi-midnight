@@ -122,3 +122,32 @@ android/app/build/outputs/bundle/release/app-release.aab
    - **In-App Disclosure**: Accessible in-game via the title screen footer, the Settings Modal (`05 // Privacy & POPIA Compliance`), and the User Profile modal.
    - **Data Disclosures**: Details local offline storage (`localStorage`), optional Google OAuth & Supabase cloud backup, public leaderboard scoreboards, and zero third-party advertising or trackers.
    - **Account Deletion URL / Instructions**: Users can purge all local data in-app or request cloud account/profile erasure by emailing `seitznsounds@gmail.com` in terms of POPIA Section 24 and GDPR Article 17.
+
+---
+
+## 6. Google Play Closed Testing & "Visita Testers" Workflow
+
+### Mandatory Google Play Policy Requirement
+Under Google Play's developer policy, **all new personal developer accounts are required to run a closed test before applying for public production release**:
+- **Requirement**: Minimum of **20 testers** opted into your closed test track.
+- **Duration**: Testers must remain continuously opted in for at least **14 consecutive days**.
+- **Crucial Warning**: Anyone attempting to access the direct Google Play Store URL (`https://play.google.com/store/apps/details?id=za.co.mzansimidnight.app&hl=en`) **without being on the authorized testers list will receive an "Item not found" or "Requested URL not found" error**.
+
+### In-App Tester Enrollment
+The game features a native in-app onboarding modal (`components/GooglePlayTesterModal.tsx`) accessible directly from the Title Screen banner, Main Menu, and System Settings:
+1. **User Notification**: Explicitly informs the user of Google's closed testing policy and why the Play Store link is restricted.
+2. **Email Capture**: Prompts the user for their Google Play account email (pre-filled if authenticated via Google OAuth).
+3. **Visita Testers List**: Automatically enrolls the operative into the **Visita Testers** list.
+4. **Key Authorization**: Uses `GOOGLE_PLAY_STORE_API_KEY` for verification across the developer pipeline.
+5. **Dual Persistence**: Saves locally in `localStorage` (`mzansi_midnight_play_tester_v1`) and syncs to Supabase (`public.mzansi_play_testers`).
+
+### Links & Synchronization Tooling
+- **Play Store App URL**: `https://play.google.com/store/apps/details?id=za.co.mzansimidnight.app&hl=en`
+- **Web Testing Opt-In URL**: `https://play.google.com/apps/testing/za.co.mzansimidnight.app`
+- **Supabase SQL Schema**: `supabase/testers_schema.sql`
+- **Tester Sync CLI Utility**:
+  ```bash
+  node scripts/sync-play-testers.mjs
+  # Or export CSV to upload directly to Google Play Console:
+  node scripts/sync-play-testers.mjs --csv
+  ```

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { GameSettings, SUPPORTED_LANGUAGES } from '../types/settings';
 import { soundscape } from '../engine/soundscape';
+import { GooglePlayTesterModal } from './GooglePlayTesterModal';
 
 export const SettingsModal: React.FC<{
   isOpen: boolean;
@@ -12,6 +13,7 @@ export const SettingsModal: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, settings, onUpdateSettings, onClearAllData, onClose }) => {
   const [confirmClear, setConfirmClear] = useState(false);
+  const [isPlayTesterOpen, setIsPlayTesterOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -366,6 +368,30 @@ export const SettingsModal: React.FC<{
             </div>
           </div>
 
+          {/* 6. ANDROID NATIVE APP & PLAY STORE */}
+          <div className="pt-2 border-t border-zinc-800 space-y-2">
+            <div className="text-xs font-mono uppercase tracking-wider text-emerald-400 flex items-center justify-between">
+              <span>06 // Android Native App &amp; Play Store</span>
+              <span className="text-[10px] text-zinc-500 font-mono">za.co.mzansimidnight.app</span>
+            </div>
+            <div className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="text-zinc-400 leading-relaxed">
+                Join the Visita Testers closed track to download Mzansi Midnight from Google Play Store.
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsPlayTesterOpen(true);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 hover:border-emerald-400 font-mono text-xs flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+              >
+                <span>▶ Play Store Access</span>
+                <span>↗</span>
+              </button>
+            </div>
+          </div>
+
           <div className="pt-2 flex justify-end">
             <button
               onClick={() => {
@@ -379,6 +405,12 @@ export const SettingsModal: React.FC<{
           </div>
         </div>
       </div>
+
+      <GooglePlayTesterModal
+        isOpen={isPlayTesterOpen}
+        onClose={() => setIsPlayTesterOpen(false)}
+        lang={settings.language}
+      />
     </div>
   );
 };

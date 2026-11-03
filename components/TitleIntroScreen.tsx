@@ -32,6 +32,7 @@ import {
 } from '../engine/i18n';
 import { LeaderboardModal } from './LeaderboardModal';
 import { UserProfileModal } from './UserProfileModal';
+import { GooglePlayTesterModal } from './GooglePlayTesterModal';
 import { getSavedUserProfile, subscribeToUserProfile, setupAuthListener } from '../engine/cloudSync';
 import { UserProfile } from '../types/leaderboard';
 
@@ -362,6 +363,7 @@ export const TitleIntroScreen: React.FC<{
   });
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isPlayTesterOpen, setIsPlayTesterOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>(() =>
     getSavedUserProfile()
   );
@@ -458,6 +460,20 @@ export const TitleIntroScreen: React.FC<{
               <span>🏆</span>
               <span className="hidden sm:inline">{t('scores.btn', 'Scores & Speedruns', lang)}</span>
               <span className="sm:hidden">{t('scores.btn_short', 'Scores', lang)}</span>
+            </button>
+
+            {/* Google Play Store / Android Closed Testing */}
+            <button
+              onClick={() => {
+                soundscape.playDieSelect();
+                setIsPlayTesterOpen(true);
+              }}
+              className="px-2.5 py-1 rounded bg-emerald-950/40 hover:bg-emerald-900/40 border border-emerald-500/50 text-emerald-300 uppercase tracking-wider cursor-pointer transition-colors flex items-center gap-1.5 font-bold"
+              title={t('playstore.tooltip', 'Download for Android on Google Play (Visita Testers Track)', lang)}
+            >
+              <span>▶</span>
+              <span className="hidden sm:inline">Play Store</span>
+              <span className="sm:hidden">Android</span>
             </button>
 
             {/* Google Profile & Cloud Save */}
@@ -867,6 +883,33 @@ export const TitleIntroScreen: React.FC<{
                       String(collectedKeystoneCount)
                     )}
                   </span>
+                  <span className="text-zinc-400 group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+
+              {/* ANDROID STANDALONE APP BANNER */}
+              <div
+                onClick={() => {
+                  soundscape.playDieSelect();
+                  setIsPlayTesterOpen(true);
+                }}
+                className="p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 via-zinc-900 to-cyan-950/30 border border-emerald-500/40 hover:border-emerald-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer transition-all shadow-md group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center font-mono font-bold text-emerald-300 text-base shrink-0">
+                    ▶
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider">
+                      {t('playstore.teaser_tag', 'NATIVE STANDALONE ANDROID RELEASE', lang)}
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                      {t('playstore.teaser_title', 'Download on Google Play Store — Closed Testing (Visita Testers)', lang)}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-center font-mono text-xs text-emerald-300">
+                  <span className="hidden xs:inline">{t('playstore.teaser_action', 'Join Testers & Download', lang)}</span>
                   <span className="text-zinc-400 group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </div>
@@ -2097,6 +2140,17 @@ export const TitleIntroScreen: React.FC<{
             <span className="text-zinc-500 hidden sm:inline">A South African Noir RPG</span>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                soundscape.playDieSelect();
+                setIsPlayTesterOpen(true);
+              }}
+              className="text-emerald-400/90 hover:text-emerald-300 underline underline-offset-2 transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <span>Google Play Store (Android)</span>
+              <span className="text-[10px]">↗</span>
+            </button>
+            <span className="text-zinc-600 hidden sm:inline">•</span>
             <a
               href="/privacy"
               target="_blank"
@@ -2409,6 +2463,14 @@ export const TitleIntroScreen: React.FC<{
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         onProfileUpdated={(p) => setUserProfile(p)}
+        lang={lang}
+      />
+
+      {/* Google Play Store Tester Modal */}
+      <GooglePlayTesterModal
+        isOpen={isPlayTesterOpen}
+        onClose={() => setIsPlayTesterOpen(false)}
+        defaultEmail={userProfile.email}
         lang={lang}
       />
 

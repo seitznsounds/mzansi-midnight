@@ -591,6 +591,31 @@ The overarching narrative architecture is documented in [`STORIES.md`](file:///c
   - 178/178 tests passing across all 14 test suites in Vitest.
   - 0 TypeScript errors (`npx tsc --noEmit`), clean Next.js build (`npm run build`), and Android assets synced (`npx cap sync android`).
 
+---
+
+### Phase 30: Google Play Store Closed Testing & Visita Testers Track Integration ✅
+- [x] **Mandatory Google Play Policy Compliance & User Notice**:
+  - Explicitly stipulated in-app that Google Play requires all newly registered personal developer apps to complete a closed testing phase with at least 20 opted-in testers for 14 continuous days before production release approval.
+  - Informs players that visiting the direct Play Store URL (`https://play.google.com/store/apps/details?id=za.co.mzansimidnight.app&hl=en`) will display an *"Item not found"* error unless their account is enrolled on the authorized closed test list.
+- [x] **Automated Tester Enrollment Service (`engine/testerService.ts`)**:
+  - Implemented `registerPlayTester(email, listName)` with RFC 5322 regex validation and dual persistence.
+  - Caches tester state in `localStorage` (`mzansi_midnight_play_tester_v1`) for immediate local responsiveness.
+  - Persists registration to Supabase `public.mzansi_play_testers` with timestamp, client user-agent telemetry, and `GOOGLE_PLAY_STORE_API_KEY` pipeline tracking.
+  - Provides canonical endpoints for Google Play Store app listing and web opt-in testing tracks (`https://play.google.com/apps/testing/za.co.mzansimidnight.app`).
+- [x] **Noir-Styled Onboarding Modal (`components/GooglePlayTesterModal.tsx`)**:
+  - Built interactive modal with custom Google Play icon badge, policy advisory banners, email capture with validation, direct Play Store and Web Opt-In launcher buttons, and account reset capabilities.
+- [x] **Universal UI Touchpoints (`TitleIntroScreen.tsx` & `SettingsModal.tsx`)**:
+  - **Top Classification Bar**: Added persistent `[▶ Play Store]` button in the header.
+  - **Main Menu Banner**: High-priority "Native Standalone Android Release — Download on Google Play Store" card in `activeTab === 'main'`.
+  - **Card Footer**: Direct `Google Play Store (Android) ↗` link alongside the Privacy Policy & POPIA notice.
+  - **System Settings**: Added section `06 // Android Native App & Play Store` inside `SettingsModal.tsx`.
+- [x] **Supabase SQL Schema & CLI Sync Utility**:
+  - Created `supabase/testers_schema.sql` defining `public.mzansi_play_testers` with Row Level Security.
+  - Built `scripts/sync-play-testers.mjs` supporting batch listing, policy threshold checking (X / 20 testers), and `--csv` export for Google Play Console.
+- [x] **Automated Unit Tests & Verification (`engine/__tests__/playTesterService.test.ts`)**:
+  - 9 automated unit tests verifying RFC email validation, local storage caching, Supabase upsert fallback handling, duplicate prevention, and policy string integrity (187/187 tests passing across 15 test suites).
+
+
 
 
 
